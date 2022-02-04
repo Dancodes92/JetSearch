@@ -17,9 +17,10 @@ function App() {
     e.preventDefault();
     setIsLoading(true);
     setIsError(false);
+    const airport = Airport.toUpperCase();
     axios
-      .post("/api/search/yo", {
-        Airport,
+      .post("/api/search", {
+        airport,
         date,
         categories,
         passengers,
@@ -38,7 +39,7 @@ function App() {
   const handleChange = e => {
     const { name, value } = e.target;
     if (name === "Airport") {
-      setAirport(value);
+      setAirport(value)
     } else if (name === "date") {
       setDate(value);
     } else if (name === "passengers") {
@@ -55,7 +56,6 @@ function App() {
     }
   };
 
-  console.log("categories", categories);
 
   return (
     <div className="App">
@@ -71,6 +71,7 @@ function App() {
                 name="Airport"
                 placeholder="Airport"
                 onChange={handleChange}
+                value={Airport.toLocaleUpperCase()}
               />
             </div>
             <div className="form-group">
@@ -95,49 +96,220 @@ function App() {
                 onChange={handleChange}
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="category">Category</label>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="category"
-                  name="economy"
-                  onChange={handleCheckbox}
-                  checked={categories.includes("economy")}
-                />
+            <div className="form-group-checkbox">
+              <label htmlFor="category">Aircraft Category</label>
 
-                <label className="form-check-label" htmlFor="category">
-                  Economy
-                </label>
-              </div>
               <div className="form-check">
                 <input
                   type="checkbox"
                   className="form-check-input"
                   id="category"
-                  name="business"
+                  name="Ultra Long Range"
                   onChange={handleCheckbox}
-                  checked={categories.includes("business")}
+                  checked={categories.includes("Ultra Long Range")}
                 />
                 <label className="form-check-label" htmlFor="category">
-                  Business
+                  Ultra Long Range
                 </label>
               </div>
+
               <div className="form-check">
                 <input
                   type="checkbox"
                   className="form-check-input"
                   id="category"
-                  name="first"
+                  name="Heavy Jet"
                   onChange={handleCheckbox}
-                  checked={categories.includes("first")}
+                  checked={categories.includes("Heavy Jet")}
                 />
                 <label className="form-check-label" htmlFor="category">
-                  First
+                  Heavy Jet
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Super-Mid Jet"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Super-Mid Jet")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Super-Mid Jet
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Mid Jet"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Mid Jet")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Mid Jet
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Light Jet"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Light Jet")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Light Jet
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Very Light Jet"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Very Light Jet")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Very Light Jet
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Turboprop"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Turboprop")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Turboprop
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Piston"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Piston")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Piston
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="VIP Airliner"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("VIP Airliner")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  VIP Airliner
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Jet Airliner"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Jet Airliner")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Jet Airliner
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Regional Jet Airliner"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Regional Jet Airliner")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Regional Jet Airliner
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Turboprop Airliner"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Turboprop Airliner")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Turboprop Airliner
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Piston Airliner"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Piston Airliner")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Piston Airliner
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Helicopter - Twin"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Helicopter - Twin")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Helicopter - Twin
+                </label>
+              </div>
+
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="category"
+                  name="Helicopter - Single"
+                  onChange={handleCheckbox}
+                  checked={categories.includes("Helicopter - Single")}
+                />
+                <label className="form-check-label" htmlFor="category">
+                  Helicopter - Single
                 </label>
               </div>
             </div>
+
             <button type="submit" className="btn btn-primary">
               Search
             </button>

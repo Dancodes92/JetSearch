@@ -2,21 +2,38 @@ const router = require("express").Router();
 const puppeteer = require("puppeteer");
 module.exports = router;
 
-router.get("/", async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
-    const { username, password } = req.body;
-    const startSearch = await flightListPro();
-    res.send(startSearch).status(200);
-  } catch (error) {
-    console.log(error);
-    res.send(error);
+    const { username, password, airport, date, passengers, categories } =
+      req.body;
+    console.log(req.body);
+    const startSearch = await flightListPro(
+      username,
+      password,
+      airport,
+      date,
+      passengers,
+      categories
+    );
+    startSearch.then(result => {
+      res.json(result);
+    });
+  } catch (err) {
+    next(err);
   }
 });
 
-const flightListPro = async info => {
+const flightListPro = async (
+  username,
+  password,
+  airport,
+  date,
+  passengers,
+  categories
+) => {
   // headless mode
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -27,10 +44,6 @@ const flightListPro = async info => {
   await page.goto("https://flightlistpro.com/index.php");
   await page.setViewport({ width: 1297, height: 679 });
 
-  await page.screenshot({
-    path: "first.png",
-  });
-
   await page.type("#username", "pschneider@luxury.aero"); //use environment variable for this
   await page.type("#password", "Spacecowboy989!"); //use environment variable for this
   await page.click("table > tbody > tr > td:nth-child(5) > input");
@@ -38,29 +51,48 @@ const flightListPro = async info => {
 
   await page.waitForTimeout(500);
 
-  await page.screenshot({
-    path: "second.png",
-  });
   await page.waitForSelector("#code");
-  await page.type("#code", "KPWK");
+  await page.type("#code", airport);
 
   await page.waitForSelector("tbody > tr > .bold > #radiusDiv > select");
   await page.click("tbody > tr > .bold > #radiusDiv > select");
-
-  await page.select("tbody > tr > .bold > #radiusDiv > select", "1000");
+  await page.select("tbody > tr > .bold > #radiusDiv > select", "1000"); // selects 1000 mile radius from airport
 
   await page.waitForSelector("#pax");
   await page.click("#pax");
-  await page.type("#pax", "3");
+  await page.type("#pax", passengers);
 
-  await page.waitForSelector("#catTable > tbody > tr > #td_11 > input");
-  await page.click("#catTable > tbody > tr > #td_11 > input");
+  const checkCorrectBoxes = await page.evaluate(categories => {
+    const aircraft = {
+      "Ultra Long Range": "#catTable > tbody > tr > #td_11 > input",
+      "Heavy Jet": "#catTable > tbody > tr > #td_1 > input",
+      "Super-Mid Jet": "#catTable > tbody > tr > #td_11 > input",
+      "Mid Jet": "#catTable > tbody > tr > #td_9 > input",
+      "Light Jet": "#catTable > tbody > tr > #td_8 > input",
+      "Very Light Jet": "#catTable > tbody > tr > #td_14 > input",
+      Turboprop: "#catTable > tbody > tr > #td_12 > input",
+      Piston: "#catTable > tbody > tr > #td_10 > input",
+      "VIP Airliner": "#catTable > tbody > tr > #td_15 > input",
+      "Jet Airliner": "#catTable > tbody > tr > #td_7 > input",
+      "Regional Jet Airliner": "#catTable > tbody > tr > #td_19 > input",
+      "Turboprop Airliner": "#catTable > tbody > tr > #td_13 > input",
+      "Piston Airliner": "#catTable > tbody > tr > #td_17 > input",
+      "Helicopter - Twin": "#catTable > tbody > tr > #td_6 > input",
+      "Helicopter - Single": "#catTable > tbody > tr > #td_5 > input",
+    };
+    categories.forEach(category => {
+      document.querySelector(aircraft[category]).click();
+    });
+  }, categories);
 
-  await page.waitForSelector("#catTable > tbody > tr > #td_9 > input");
-  await page.click("#catTable > tbody > tr > #td_9 > input");
+  // await page.waitForSelector("#catTable > tbody > tr > #td_11 > input");
+  // await page.click("#catTable > tbody > tr > #td_11 > input");
 
-  await page.waitForSelector("#catTable > tbody > tr > #td_8 > input");
-  await page.click("#catTable > tbody > tr > #td_8 > input");
+  // await page.waitForSelector("#catTable > tbody > tr > #td_9 > input");
+  // await page.click("#catTable > tbody > tr > #td_9 > input");
+
+  // await page.waitForSelector("#catTable > tbody > tr > #td_8 > input");
+  // await page.click("#catTable > tbody > tr > #td_8 > input");
 
   await page.waitForSelector(".tablecl > tbody > tr > td > .button");
   await page.click(".tablecl > tbody > tr > td > .button");
@@ -195,14 +227,8 @@ const flightListPro = async info => {
   await page.waitForSelector(
     "#myModal > div > div > div.modal-header > button"
   );
-  await page.screenshot({
-    path: "third.png",
-  });
-  await page.click("#myModal > div > div > div.modal-header > button");
 
-  await page.screenshot({
-    path: "shot.png",
-  });
+  await page.click("#myModal > div > div > div.modal-header > button");
 
   await browser.close();
   return allSelects;

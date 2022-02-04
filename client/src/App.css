@@ -37,6 +37,21 @@
   }
 }
 
-/* create a class for radio buttons */
+.form-check-label {
+  font-size: 1.3rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.form-check {
+  margin-right: 1rem;
+}
 
 
