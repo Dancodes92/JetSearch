@@ -62,16 +62,17 @@ const flightListPro = async (
   await page.click("#pax");
   await page.type("#pax", passengers);
 
-  const checkCorrectBoxes = await page.evaluate(categories => {
+  // in the array of categories, click the checkboxes
+  const clickCheckboxes = async () => {
     const aircraft = {
-      "Ultra Long Range": "#catTable > tbody > tr > #td_11 > input",
+      "Ultra Long Range": "#catTable > tbody > tr > #td_20 > input",
       "Heavy Jet": "#catTable > tbody > tr > #td_1 > input",
       "Super-Mid Jet": "#catTable > tbody > tr > #td_11 > input",
       "Mid Jet": "#catTable > tbody > tr > #td_9 > input",
       "Light Jet": "#catTable > tbody > tr > #td_8 > input",
       "Very Light Jet": "#catTable > tbody > tr > #td_14 > input",
-      Turboprop: "#catTable > tbody > tr > #td_12 > input",
-      Piston: "#catTable > tbody > tr > #td_10 > input",
+      "Turboprop": "#catTable > tbody > tr > #td_12 > input",
+      "Piston": "#catTable > tbody > tr > #td_10 > input",
       "VIP Airliner": "#catTable > tbody > tr > #td_15 > input",
       "Jet Airliner": "#catTable > tbody > tr > #td_7 > input",
       "Regional Jet Airliner": "#catTable > tbody > tr > #td_19 > input",
@@ -80,19 +81,28 @@ const flightListPro = async (
       "Helicopter - Twin": "#catTable > tbody > tr > #td_6 > input",
       "Helicopter - Single": "#catTable > tbody > tr > #td_5 > input",
     };
-    categories.forEach(category => {
-      document.querySelector(aircraft[category]).click();
-    });
-  }, categories);
+  for (let i = 0; i < categories.length; i++) {
+    await page.waitForSelector(aircraft[categories[i]]);
+    await page.click(aircraft[categories[i]]);
+  }
+
+
+};
+
+ await clickCheckboxes();
+ 
+
+
+
 
   // await page.waitForSelector("#catTable > tbody > tr > #td_11 > input");
   // await page.click("#catTable > tbody > tr > #td_11 > input");
 
-  // await page.waitForSelector("#catTable > tbody > tr > #td_9 > input");
-  // await page.click("#catTable > tbody > tr > #td_9 > input");
+  // await page.waitForSelector("#catTable > tbody > tr > #td_1 > input");
+  // await page.click("#catTable > tbody > tr > #td_1 > input");
 
-  // await page.waitForSelector("#catTable > tbody > tr > #td_8 > input");
-  // await page.click("#catTable > tbody > tr > #td_8 > input");
+  // await page.waitForSelector("#catTable > tbody > tr > #td_20 > input");
+  // await page.click("#catTable > tbody > tr > #td_20 > input");
 
   await page.waitForSelector(".tablecl > tbody > tr > td > .button");
   await page.click(".tablecl > tbody > tr > td > .button");
