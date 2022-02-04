@@ -207,3 +207,12 @@ const flightListPro = async info => {
   await browser.close();
   return allSelects;
 };
+
+router.post("/yo", (req, res, next) => {
+  try {
+    console.log(req.body);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+});
