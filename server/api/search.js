@@ -85,6 +85,8 @@ const flightListPro = async (
 
   await clickCheckboxes();
 
+  await page.screenshot({ path: "1.png" });
+
   await page.waitForSelector(".tablecl > tbody > tr > td > .button");
   await page.click(".tablecl > tbody > tr > td > .button");
 
@@ -214,6 +216,8 @@ const flightListPro = async (
   allSelects.push(flightPicker3);
 
   page.waitForTimeout(500);
+
+  await page.screenshot({ path: "1.png" });
 
   await page.click("#sendFeedback");
 
