@@ -15,9 +15,7 @@ router.post("/", async (req, res, next) => {
       passengers,
       categories
     );
-    startSearch.then(result => {
-      res.json(result);
-    });
+    res.send(startSearch);
   } catch (err) {
     next(err);
   }
@@ -33,13 +31,11 @@ const flightListPro = async (
 ) => {
   // headless mode
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
-  // const browser = await puppeteer.launch({
-  //   headless: true,
-  // });
+
   const page = await browser.newPage();
   await page.goto("https://flightlistpro.com/index.php");
   await page.setViewport({ width: 1297, height: 679 });
@@ -81,28 +77,13 @@ const flightListPro = async (
       "Helicopter - Twin": "#catTable > tbody > tr > #td_6 > input",
       "Helicopter - Single": "#catTable > tbody > tr > #td_5 > input",
     };
-  for (let i = 0; i < categories.length; i++) {
-    await page.waitForSelector(aircraft[categories[i]]);
-    await page.click(aircraft[categories[i]]);
-  }
+    for (let i = 0; i < categories.length; i++) {
+      await page.waitForSelector(aircraft[categories[i]]);
+      await page.click(aircraft[categories[i]]);
+    }
+  };
 
-
-};
-
- await clickCheckboxes();
- 
-
-
-
-
-  // await page.waitForSelector("#catTable > tbody > tr > #td_11 > input");
-  // await page.click("#catTable > tbody > tr > #td_11 > input");
-
-  // await page.waitForSelector("#catTable > tbody > tr > #td_1 > input");
-  // await page.click("#catTable > tbody > tr > #td_1 > input");
-
-  // await page.waitForSelector("#catTable > tbody > tr > #td_20 > input");
-  // await page.click("#catTable > tbody > tr > #td_20 > input");
+  await clickCheckboxes();
 
   await page.waitForSelector(".tablecl > tbody > tr > td > .button");
   await page.click(".tablecl > tbody > tr > td > .button");
@@ -110,7 +91,6 @@ const flightListPro = async (
   await page.waitForNavigation();
 
   let allSelects = [];
-
   // theres a way to do this with recursion
   const flightPicker = await page.evaluate(() => {
     let arr = [];
@@ -134,7 +114,10 @@ const flightListPro = async (
         `${nextCompanyName.innerText} ${nextJet.innerText}`
       ) {
         button[i].click();
-        arr.push(`${curCompanyName.innerText} ${curJet.innerText}`);
+        arr.push({
+          company: curCompanyName.innerText,
+          jet: curJet.innerText,
+        });
       }
     }
     return arr;
@@ -174,7 +157,10 @@ const flightListPro = async (
         `${nextCompanyName.innerText} ${nextJet.innerText}`
       ) {
         button[i].click();
-        arr.push(`${curCompanyName.innerText} ${curJet.innerText}`);
+        arr.push({
+          company: curCompanyName.innerText,
+          jet: curJet.innerText,
+        });
       }
     }
     return arr;
@@ -216,7 +202,10 @@ const flightListPro = async (
         `${nextCompanyName.innerText} ${nextJet.innerText}`
       ) {
         button[i].click();
-        arr.push(`${curCompanyName.innerText} ${curJet.innerText}`);
+        arr.push({
+          company: curCompanyName.innerText,
+          jet: curJet.innerText,
+        });
       }
     }
     return arr;

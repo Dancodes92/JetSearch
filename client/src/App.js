@@ -11,6 +11,8 @@ function App() {
   const [date, setDate] = useState("");
   const [passengers, setPassengers] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   // have a button for search after a form that uses axios to make a post request to the server "api/search" with the form data
   const handleSubmit = e => {
@@ -18,22 +20,29 @@ function App() {
     setIsLoading(true);
     setIsError(false);
     const airport = Airport.toUpperCase();
-    axios
-      .post("/api/search", {
-        airport,
-        date,
-        categories,
-        passengers,
-      })
-      .then(res => {
-        setFlights(res.data);
-        setIsLoading(false);
-      })
-      .catch(err => {
-        setIsError(true);
-        setIsLoading(false);
-      });
+    axios.post("/api/search", {
+      username,
+      password,
+      airport,
+      date,
+      passengers,
+      categories
+    }).then(res => {
+      setFlights(res.data);
+      console.log("data", res.data);
+      setIsLoading(false);
+    }
+    );
   };
+
+  console.log("data", flights);
+  // concat all the flights arrays into one array
+  const allFlights = flights.reduce((acc, curr) => {
+    return acc.concat(curr);
+  }, []);
+
+  console.log("allFlights", allFlights);
+
 
   // handle the change of the form inputs
   const handleChange = e => {
@@ -325,12 +334,15 @@ function App() {
           <div>
             <h1>Results</h1>
             <ul>
-              {flights.map(flight => (
-                <li key={flight.id}>
-                  {flight.airline} {flight.flight_number}{" "}
-                  {flight.departure_airport} {flight.arrival_airport}
+              {allFlights?.map((flight, index) => (
+                <li key={index}>
+                  company: {flight.company}
+                  <br />
+                  jetType: {flight.jet}
+                  <br />
                 </li>
               ))}
+
             </ul>
           </div>
         )}
