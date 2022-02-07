@@ -1,20 +1,23 @@
 import React, { createContext, useContext, useState } from "react";
 import axios from "axios";
+import SetAuthToken from "./SetAuthToken";
 
 const authContext = createContext();
 
 export function useAuth() {
-  const[authed, setAuthed] = useState(false);
-  const[user, setUser] = useState({});
+  const [authed, setAuthed] = useState(false);
+  const [user, setUser] = useState({});
 
   return {
     authed,
     user,
-    login: (username, password) => {
+    login: (email, password) => {
       axios
-        .post("/auth/login", { username, password })
+        .post("/auth/login", { email, password })
         .then(res => {
           setAuthed(true);
+          setUser(res.data);
+          SetAuthToken(res.data.token);
           localStorage.setItem("token", res.data.token);
         })
         .catch(err => {
@@ -26,43 +29,56 @@ export function useAuth() {
       setUser({});
       localStorage.removeItem("token");
     },
-    signUp: (username, password, avinodeUsername, avinodePassword, flightListProUsername, flightListProPassword) => {
+    signUp: (
+      email,
+      password,
+      avinodeUsername,
+      avinodePassword,
+      flightListProUsername,
+      flightListProPassword
+    ) => {
       axios
-        .post("/auth/signup", { username, password, avinodeUsername, avinodePassword, flightListProUsername, flightListProPassword })
+        .post("/auth/signup", {
+          email,
+          password,
+          avinodeUsername,
+          avinodePassword,
+          flightListProUsername,
+          flightListProPassword,
+        })
         .then(res => {
           setAuthed(true);
+          setUser(res.data);
           localStorage.setItem("token", res.data.token);
+          return res.data;
         })
         .catch(err => {
           console.log(err);
         });
-
     },
-    getUser: () => {
+    getUserByToken: () => {
       axios
-        .get("/auth/me")
+        .get("/auth/user", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
         .then(res => {
           setAuthed(true);
-          setUser(res.data.user);
+          setUser(res.data);
         })
         .catch(err => {
           console.log(err);
         });
-    }
+    },
   };
 }
 
 export function AuthProvider({ children }) {
   const auth = useAuth();
-  return (
-    <authContext.Provider value={auth}>
-      {children}
-    </authContext.Provider>
-  );
+  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 }
 
 export default function AuthConsumer() {
-  return useContext(authContext)
+  return useContext(authContext);
 }
-
-

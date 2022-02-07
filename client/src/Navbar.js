@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import useAuth from "./useAuth";
-import { useLocation, Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const { authed, logout } = useAuth();
@@ -9,7 +9,7 @@ function Navbar() {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/");
   };
 
   return (

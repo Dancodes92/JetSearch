@@ -4,6 +4,9 @@ import "./index.css";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
+import SetAuthToken from "./SetAuthToken";
+
+SetAuthToken(localStorage.getItem("token"));
 
 
 const rootElement = document.getElementById("root");

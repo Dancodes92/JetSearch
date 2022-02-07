@@ -1,32 +1,43 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import  useAuth  from './useAuth';
-
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import useAuth from "./useAuth";
+import { useLocation } from "react-router-dom";
+import AuthConsumer from "./useAuth";
 
 function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, authed } = useAuth();
+  const { state } = useLocation();
 
-  const handleLogin = () => {
-    login().then(() => {
-      navigate('/search');
-    });
+  useEffect(() => {
+    if (authed) {
+      navigate("/search");
+    }
+  }, [authed, navigate]);
+
+  const handleLogin = (email, password) => {
+    login(email, password);
+    
   };
 
 
   return (
     <div>
       <h1>Login</h1>
-      <form onSubmit={handleLogin}>
-        <input type="text" name="username" placeholder="username" />
-        <input type="password" name="password" placeholder="password" />
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        handleLogin(e.target.email.value, e.target.password.value);
+      }}>
+        <input type="email" name="email" placeholder="Email" />
+        <input type="password" name="password" placeholder="Password" />
         <button type="submit">Login</button>
       </form>
+      {state && state.path && <p>{state.path}</p>}
     </div>
   );
 }
 
 
 
-export default Login;
 
+export default Login;
