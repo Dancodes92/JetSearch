@@ -32,25 +32,25 @@ export function useAuth() {
     signUp: (
       email,
       password,
-      avinodeUsername,
+      avinodeUserName,
       avinodePassword,
-      flightListProUsername,
+      flightListProUserName,
       flightListProPassword
     ) => {
       axios
         .post("/auth/signup", {
           email,
           password,
-          avinodeUsername,
+          avinodeUserName,
           avinodePassword,
-          flightListProUsername,
+          flightListProUserName,
           flightListProPassword,
         })
         .then(res => {
           setAuthed(true);
           setUser(res.data);
+          SetAuthToken(res.data.token);
           localStorage.setItem("token", res.data.token);
-          return res.data;
         })
         .catch(err => {
           console.log(err);
@@ -66,6 +66,7 @@ export function useAuth() {
         .then(res => {
           setAuthed(true);
           setUser(res.data);
+          return res.data;
         })
         .catch(err => {
           console.log(err);

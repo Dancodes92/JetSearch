@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 import { useLocation } from "react-router-dom";
-import AuthConsumer from "./useAuth";
 
 function Login() {
   const navigate = useNavigate();
@@ -13,11 +12,14 @@ function Login() {
     if (authed) {
       navigate("/search");
     }
-  }, [authed, navigate]);
+  }, [authed, navigate, state]);
+
+  console.log(state);
+
 
   const handleLogin = (email, password) => {
     login(email, password);
-    
+
   };
 
 

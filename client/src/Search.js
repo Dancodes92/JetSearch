@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from "axios";
+import { useAuth } from "./useAuth";
 
 function Search() {
   const [flights, setFlights] = useState([]);
@@ -11,6 +12,9 @@ function Search() {
   const [categories, setCategories] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const { getUserByToken } = useAuth();
+  console.log("the token", getUserByToken);
 
   // have a button for search after a form that uses axios to make a post request to the server "api/search" with the form data
   const handleSubmit = e => {

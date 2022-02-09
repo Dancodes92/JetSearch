@@ -43,11 +43,12 @@ User.prototype.validPassword = function (password) {
   return bcrypt.compareSync(password, this.password);
 };
 
-User.prototype.generatToken = function () {
+User.prototype.generateToken = function () {
   return JWT.sign({ id: this.id }, process.env.JWT_SECRET, {});
 };
 
 User.authenticate = async function ({ email, password }) {
+  console.log("auth", email)
   email = email.toLowerCase();
   const user = await User.findOne({
     where: { email },
@@ -57,7 +58,7 @@ User.authenticate = async function ({ email, password }) {
     err.status = 401;
     throw err;
   }
-  return user.generatToken();
+  return user.generateToken();
 };
 
 User.findByToken = async function (token) {

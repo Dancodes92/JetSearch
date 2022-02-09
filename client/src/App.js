@@ -5,6 +5,7 @@ import Login from "./Login";
 import RequireAuth from "./RequireAut";
 import Search from "./Search";
 import { AuthProvider } from "./useAuth";
+import SignUp from "./SignUp";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route
             path="/search"
             element={

@@ -4,10 +4,22 @@ import { useLocation, Navigate, useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 
 function RequireAuth({ children }) {
-  const { authed } = useAuth();
+  const { authed, user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  return authed ? (
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+
+
+
+
+  return user ? (
     children
   ) : (
     <Navigate to="/" replace state={{ path: location.pathname }} />
