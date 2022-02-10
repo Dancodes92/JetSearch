@@ -5,6 +5,8 @@ const RequireAuth = () => {
   const { auth } = useAuth();
   const location = useLocation();
 
+
+
   return auth ? (
     <Outlet />
   ) : (

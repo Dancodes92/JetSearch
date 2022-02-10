@@ -10,11 +10,13 @@ import {
 } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import useAuth from "../hooks/useAuth";
 
 function SignUp() {
   const userRef = useRef();
   const errRef = useRef();
   const navigate = useNavigate();
+  const { setAuth } = useAuth();
 
   const [email, setEmail] = useState("");
   const [userFocus, setUserFocus] = useState(false);
@@ -52,7 +54,10 @@ function SignUp() {
           withCredentials: true,
         }
       );
+      const accessToken = res?.data?.token;
+      console.log("acces token sU", accessToken);
       console.log(res.data);
+      setAuth({ email, pwd, accessToken });
       navigate("/search");
     } catch (err) {
       if (!err?.response) {

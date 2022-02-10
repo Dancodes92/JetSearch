@@ -12,12 +12,12 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="login" element={<Login />} />
+        <Route path="signup" element={<SignUp />} />
+        <Route path="unauthorized" element={<Unauthorized />} />
         {/* protect */}
         <Route element={<RequireAuth />}>
-          <Route path="/search" element={<Search />} />
+          <Route path="search" element={<Search />} />
         </Route>
         {/* catch */}
         <Route path="*" element={<Missing />} />

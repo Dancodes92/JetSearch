@@ -13,11 +13,11 @@ function Navbar() {
     navigate("/login");
   };
 
-  console.log(auth);
 
   //if auth is an empty object, then the user is not logged in and we display the login button and the signup button.
   //if auth is not an empty object, then the user is logged in and we display the logout button.
   const user = auth.email;
+  console.log(user);
 
   return (
     <>
