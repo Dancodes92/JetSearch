@@ -8,12 +8,13 @@ import {
   faFontAwesomeIcon,
   FontAwesomeIcon,
 } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function SignUp() {
   const userRef = useRef();
   const errRef = useRef();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [userFocus, setUserFocus] = useState(false);
@@ -26,7 +27,6 @@ function SignUp() {
   const [matchFocus, setMatchFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     userRef.current.focus();
@@ -41,37 +41,32 @@ function SignUp() {
     setErrMsg("");
   }, [email, pwd, matchPwd]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await axios.post("auth/signup", ({ email, password: pwd }),
-      {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true
-      }
+      const res = await axios.post(
+        "auth/signup",
+        { email, password: pwd },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
       );
-      console.log(res.data)
-      setSuccess(true)
-    } catch(err) {
-      if(!err?.response) {
-        setErrMsg('No Server Response');
+      console.log(res.data);
+      navigate("/search");
+    } catch (err) {
+      if (!err?.response) {
+        setErrMsg("No Server Response");
       } else if (err.response?.status === 409) {
-        setErrMsg('Already a Member')
+        setErrMsg("Already a Member");
       } else {
-        setErrMsg("Sign Up Failed")
+        setErrMsg("Sign Up Failed");
       }
       errRef.current.focus();
     }
-
-  }
+  };
 
   return (
-    <>
-    {success ? (
-      <section>
-        <h1>Success!</h1>
-      </section>
-    ) : (
     <section>
       <p
         ref={errRef}
@@ -138,15 +133,11 @@ function SignUp() {
         <br />
         <span className="line">
           {/*insert router Link*/}
-          <Link to="/">
-            Login
-          </Link>
+          <Link to="/">Login</Link>
         </span>
       </p>
     </section>
-    )}
-    </>
-  )
+  );
 }
 
 export default SignUp;
