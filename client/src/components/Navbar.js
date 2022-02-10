@@ -1,29 +1,39 @@
+import { faLongArrowAltUp } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 function Navbar() {
-  const navigate = useNavigate();
-  const [authed, setAuth] = useState(false)
+ // display a login / signup button if not logged in, if logged in display a logout button remove
+ const { auth, setAuth } = useAuth();
 
-  const handleLogout = () => {
-    navigate("/");
-  };
+  console.log(auth)
+
+  //if auth is an empty object, then the user is not logged in and we display the login button and the signup button.
+  //if auth is not an empty object, then the user is logged in and we display the logout button.
 
   return (
-    <nav>
-      {authed ? (
-        <>
-          <Link to="/search">Search</Link>
-          <button onClick={handleLogout}>Logout</button>
-        </>
-      ) : (
-        <>
-          <Link to="/login">Login</Link>
-          <Link to="/signup">Signup</Link>
-        </>
-      )}
-    </nav>
+   <>
+   {auth ? (
+     <nav>
+       <button
+       onClick={() => {
+        window.localStorage.removeItem("token");
+        setAuth(false);
+       }
+        }
+        >
+        Logout
+        </button>
+      </nav>
+    ) : (
+      <nav>
+        <Link to="/login">Login</Link>
+        <Link to="/signup">Signup</Link>
+      </nav>
+    )}
+    </>
   );
 }
 
