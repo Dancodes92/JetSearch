@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
-  const { login, authed } = useAuth();
+  const { login, authed, user } = useAuth();
   const { state } = useLocation();
 
   useEffect(() => {
@@ -13,8 +13,6 @@ function Login() {
       navigate("/search");
     }
   }, [authed, navigate, state]);
-
-  console.log(state);
 
 
   const handleLogin = (email, password) => {
@@ -34,7 +32,6 @@ function Login() {
         <input type="password" name="password" placeholder="Password" />
         <button type="submit">Login</button>
       </form>
-      {state && state.path && <p>{state.path}</p>}
     </div>
   );
 }

@@ -1,120 +1,152 @@
-import React from "react";
+import { useRef, useState, useEffect } from "react";
+import {
+  faCheck,
+  faTimes,
+  faInfoCircle,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  faFontAwesomeIcon,
+  FontAwesomeIcon,
+} from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-import { useAuth } from "./useAuth";
-import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import AuthConsumer from "./useAuth";
+import axios from "axios";
 
 function SignUp() {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [passwordConfirm, setPasswordConfirm] = React.useState("");
-  const [avinodeUserName, setAvinodeUsername] = React.useState("");
-  const [avinodePassword, setAvinodePassword] = React.useState("");
-  const [flightListProUserName, setFlightListProUsername] = React.useState("");
-  const [flightListProPassword, setFlightListProPassword] = React.useState("");
-  const [error, setError] = React.useState("");
-  const navigate = useNavigate();
-  const { authed, signUp } = useAuth();
-  const { state } = useLocation();
+  const userRef = useRef();
+  const errRef = useRef();
 
+  const [email, setEmail] = useState("");
+  const [userFocus, setUserFocus] = useState(false);
 
-  React.useEffect(() => {
-    if (authed) {
-      navigate("/search");
-    }
-  }, [authed, navigate, state]);
+  const [pwd, setPwd] = useState("");
+  const [pwdFocus, setPwdFocus] = useState(false);
 
-  const handleSubmit = e => {
+  const [matchPwd, setMatchPwd] = useState(false);
+  const [validMatch, setValidMatch] = useState(false);
+  const [matchFocus, setMatchFocus] = useState(false);
+
+  const [errMsg, setErrMsg] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    userRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+    const match = pwd === matchPwd;
+    setValidMatch(match);
+  }, [pwd, matchPwd]);
+
+  useEffect(() => {
+    setErrMsg("");
+  }, [email, pwd, matchPwd]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== passwordConfirm) {
-      setError("Passwords do not match");
-      return alert("Passwords do not match");
+    try {
+      const res = await axios.post("auth/signup", ({ email, password: pwd }),
+      {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true
+      }
+      );
+      console.log(res.data)
+      setSuccess(true)
+    } catch(err) {
+      if(!err?.response) {
+        setErrMsg('No Server Response');
+      } else if (err.response?.status === 409) {
+        setErrMsg('Already a Member')
+      } else {
+        setErrMsg("Sign Up Failed")
+      }
+      errRef.current.focus();
     }
-    if (
-      !avinodeUserName ||
-      !avinodePassword ||
-      !flightListProUserName ||
-      !flightListProPassword
-    ) {
-      setError("Please fill out all fields");
-      return alert("Please fill out all fields");
-    }
-     signUp(
-      email,
-      password,
-      avinodeUserName,
-      avinodePassword,
-      flightListProUserName,
-      flightListProPassword
-    );
-    navigate("/search");
 
-  };
+  }
 
   return (
-    <div>
+    <>
+    {success ? (
+      <section>
+        <h1>Success!</h1>
+      </section>
+    ) : (
+    <section>
+      <p
+        ref={errRef}
+        className={errMsg ? "errmsg" : "offscreen"}
+        aria-live="assertive"
+      >
+        {errMsg}
+      </p>
       <h1>Sign Up</h1>
       <form onSubmit={handleSubmit}>
+        <label htmlFor="email">Email: </label>
         <input
           type="email"
-          name="email"
-          placeholder="Email"
-          value={email}
+          id="email"
+          ref={userRef}
+          autoComplete="off"
           onChange={e => setEmail(e.target.value)}
+          required
+          aria-describedby="uidnote"
+          onFocus={() => setUserFocus(true)}
+          onBlur={() => setUserFocus(false)}
         />
-        <label>Password</label>
+        <br />
+        <label htmlFor="password">Password: </label>
         <input
           type="password"
-          name="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
+          id="password"
+          required
+          onChange={e => setPwd(e.target.value)}
+          onFocus={() => setPwdFocus(true)}
+          onBlur={() => setPwdFocus(false)}
         />
-        <label>Confirm Password</label>
+        <label htmlFor="confirm_pwd">
+          Confirm Password:
+          <span className={validMatch && matchPwd ? "valid" : "hide"}>
+            <FontAwesomeIcon icon={faCheck} />
+          </span>
+          <span className={validMatch || !matchPwd ? "hide" : "invalid"}>
+            <FontAwesomeIcon icon={faTimes} />
+          </span>
+        </label>
         <input
           type="password"
-          name="passwordConfirm"
-          placeholder="Confirm Password"
-          value={passwordConfirm}
-          onChange={e => setPasswordConfirm(e.target.value)}
+          id="confirm_pwd"
+          onChange={e => setMatchPwd(e.target.value)}
+          required
+          aria-describedby="confirmnote"
+          onFocus={() => setMatchFocus(true)}
+          onBlur={() => setMatchFocus(false)}
         />
-        <label>Avinode Username</label>
-        <input
-          type="text"
-          name="avinodeUsername"
-          placeholder="Avinode Username"
-          value={avinodeUserName}
-          onChange={e => setAvinodeUsername(e.target.value)}
-        />
-        <label>Avinode Password</label>
-        <input
-          type="password"
-          name="avinodePassword"
-          placeholder="Avinode Password"
-          value={avinodePassword}
-          onChange={e => setAvinodePassword(e.target.value)}
-        />
-        <label>FlightListPro Username</label>
-        <input
-          type="text"
-          name="flightListProUsername"
-          placeholder="FlightListPro Username"
-          value={flightListProUserName}
-          onChange={e => setFlightListProUsername(e.target.value)}
-        />
-        <label>FlightListPro Password</label>
-        <input
-          type="password"
-          name="flightListProPassword"
-          placeholder="FlightListPro Password"
-          value={flightListProPassword}
-          onChange={e => setFlightListProPassword(e.target.value)}
-        />
-        <button type="submit">Sign Up</button>
+        <p
+          id="confirmnote"
+          className={matchFocus && !validMatch ? "instructions" : "offscreen"}
+        >
+          <FontAwesomeIcon icon={faInfoCircle} />
+          Password does not match!
+        </p>
+        <button disabled={!email || !pwd || !validMatch ? true : false}>
+          Sign Up
+        </button>
       </form>
-    </div>
-  );
+      <p>
+        Already a Member?
+        <br />
+        <span className="line">
+          {/*insert router Link*/}
+          <Link to="/">
+            Login
+          </Link>
+        </span>
+      </p>
+    </section>
+    )}
+    </>
+  )
 }
 
 export default SignUp;

@@ -13,13 +13,7 @@ function Navbar() {
   };
 
   return (
-    <nav
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
+    <nav>
       {authed ? (
         <>
           <Link to="/search">Search</Link>

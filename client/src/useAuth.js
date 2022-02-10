@@ -6,72 +6,57 @@ const authContext = createContext();
 
 export function useAuth() {
   const [authed, setAuthed] = useState(false);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
+
 
   return {
     authed,
     user,
-    login: (email, password) => {
-      axios
-        .post("/auth/login", { email, password })
-        .then(res => {
-          setAuthed(true);
-          setUser(res.data);
-          SetAuthToken(res.data.token);
-          localStorage.setItem("token", res.data.token);
-        })
-        .catch(err => {
-          console.log(err);
+    login: async (email, password) => {
+      try {
+        const res = await axios.post("/auth/login", {
+          email,
+          password
         });
+        console.log("res", res);
+        SetAuthToken(res.data.token);
+        setAuthed(true);
+        setUser(res.data.user);
+      } catch (err) {
+        console.log(err);
+      }
     },
     logout: () => {
       setAuthed(false);
       setUser({});
-      localStorage.removeItem("token");
+      window.localStorage.removeItem("token");
     },
-    signUp: (
-      email,
-      password,
-      avinodeUserName,
-      avinodePassword,
-      flightListProUserName,
-      flightListProPassword
-    ) => {
-      axios
-        .post("/auth/signup", {
+    register: async (email, password) => {
+      try {
+        const res = await axios.post("/auth/register", {
           email,
-          password,
-          avinodeUserName,
-          avinodePassword,
-          flightListProUserName,
-          flightListProPassword,
-        })
-        .then(res => {
-          setAuthed(true);
-          setUser(res.data);
-          SetAuthToken(res.data.token);
-          localStorage.setItem("token", res.data.token);
-        })
-        .catch(err => {
-          console.log(err);
+          password
         });
+        SetAuthToken(res.data.token);
+        setAuthed(true);
+        setUser(res.data.user);
+      } catch (err) {
+        console.log(err);
+      }
     },
-    getUserByToken: () => {
-      axios
-        .get("/auth/user", {
+   me: async () => {
+      try {
+        const res = await axios.get("/auth/me", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        })
-        .then(res => {
-          setAuthed(true);
-          setUser(res.data);
-          return res.data;
-        })
-        .catch(err => {
-          console.log(err);
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`
+          }
         });
-    },
+        setAuthed(true);
+        setUser(res.data.user);
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
 }
 

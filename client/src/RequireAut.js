@@ -4,19 +4,9 @@ import { useLocation, Navigate, useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 
 function RequireAuth({ children }) {
-  const { authed, user } = useAuth();
+  const { authed, user, me } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/");
-    }
-  }, [user, navigate]);
-
-
-
 
 
   return user ? (

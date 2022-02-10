@@ -19,22 +19,22 @@ const User = db.define("user", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  avinodeUserName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  avinodePassword: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  flightListProUserName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  flightListProPassword: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+  // avinodeUserName: {
+  //   type: DataTypes.STRING,
+  //   allowNull: false,
+  // },
+  // avinodePassword: {
+  //   type: DataTypes.STRING,
+  //   allowNull: false,
+  // },
+  // flightListProUserName: {
+  //   type: DataTypes.STRING,
+  //   allowNull: false,
+  // },
+  // flightListProPassword: {
+  //   type: DataTypes.STRING,
+  //   allowNull: false,
+  // },
 });
 
 module.exports = User;
@@ -48,7 +48,7 @@ User.prototype.generateToken = function () {
 };
 
 User.authenticate = async function ({ email, password }) {
-  console.log("auth", email)
+  console.log("auth", email);
   email = email.toLowerCase();
   const user = await User.findOne({
     where: { email },
