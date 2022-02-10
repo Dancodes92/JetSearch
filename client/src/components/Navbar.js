@@ -1,14 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import useAuth from "./useAuth";
 import { useNavigate } from "react-router-dom";
 
 function Navbar() {
-  const { authed, logout } = useAuth();
   const navigate = useNavigate();
+  const [authed, setAuth] = useState(false)
 
   const handleLogout = () => {
-    logout();
     navigate("/");
   };
 
@@ -21,7 +19,7 @@ function Navbar() {
         </>
       ) : (
         <>
-          <Link to="/">Login</Link>
+          <Link to="/login">Login</Link>
           <Link to="/signup">Signup</Link>
         </>
       )}

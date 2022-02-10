@@ -2,19 +2,20 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import { BrowserRouter } from "react-router-dom";
-import reportWebVitals from "./reportWebVitals";
-import SetAuthToken from "./SetAuthToken";
-
-SetAuthToken(localStorage.getItem("token"));
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import reportWebVitals from "./tests/reportWebVitals";
+import { AuthProvider } from "./context/AuthProvider";
 
 const rootElement = document.getElementById("root");
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <AuthProvider>
+        <Routes>
+          <Route path="/*" element={<App />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,
   rootElement
