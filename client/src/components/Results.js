@@ -22,6 +22,7 @@ function Results() {
           </li>
         ))}
       </ul>
+      <Link to="/search">Search Again</Link>
     </div>
   );
 }
