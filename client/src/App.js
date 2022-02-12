@@ -17,7 +17,7 @@ function App() {
         <Route path="unauthorized" element={<Unauthorized />} />
         {/* protect */}
         <Route element={<RequireAuth />}>
-          <Route path="search" element={<Search />} />
+          <Route path="/search" element={<Search />} />
         </Route>
         {/* catch */}
         <Route path="*" element={<Missing />} />

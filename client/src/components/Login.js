@@ -1,14 +1,12 @@
 import { useRef, useState, useEffect } from "react";
 import axios from "axios";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 const Login = () => {
   const { setAuth } = useAuth();
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
 
   const userRef = useRef();
   const errRef = useRef();
@@ -32,16 +30,10 @@ const Login = () => {
       const response = await axios.post(
         "/auth/login",
         { email, password: pwd },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
       );
-      console.log(JSON.stringify(response?.data));
-      //console.log(JSON.stringify(response));
-      const accessToken = response?.data?.token;
-      console.log("acces token", accessToken);
-      setAuth({ email, pwd, accessToken });
+      window.localStorage.setItem("token", response.data.token);
+      const token = response?.data?.token;
+      setAuth({ email, pwd, token });
       setEmail("");
       setPwd("");
       navigate("/search");

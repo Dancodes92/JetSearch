@@ -48,7 +48,6 @@ User.prototype.generateToken = function () {
 };
 
 User.authenticate = async function ({ email, password }) {
-  console.log("auth", email);
   email = email.toLowerCase();
   const user = await User.findOne({
     where: { email },

@@ -49,15 +49,10 @@ function SignUp() {
       const res = await axios.post(
         "auth/signup",
         { email, password: pwd },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
       );
-      const accessToken = res?.data?.token;
-      console.log("acces token sU", accessToken);
-      console.log(res.data);
-      setAuth({ email, pwd, accessToken });
+      window.localStorage.setItem("token", res.data.token);
+      const token = res?.data?.token;
+      setAuth({ email, pwd, token });
       navigate("/search");
     } catch (err) {
       if (!err?.response) {
@@ -138,7 +133,7 @@ function SignUp() {
         <br />
         <span className="line">
           {/*insert router Link*/}
-          <Link to="/">Login</Link>
+          <Link to="/login">Login</Link>
         </span>
       </p>
     </section>

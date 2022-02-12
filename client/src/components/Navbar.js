@@ -8,27 +8,26 @@ function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    window.localStorage.removeItem("accessToken");
+    window.localStorage.removeItem("token");
     setAuth({});
     navigate("/login");
   };
 
-
-  //if auth is an empty object, then the user is not logged in and we display the login button and the signup button.
-  //if auth is not an empty object, then the user is logged in and we display the logout button.
-  const user = auth.email;
-  console.log(user);
+  const user = auth.token
 
   return (
     <>
       {user ? (
         <nav>
-          <button onClick={handleLogout}>Logout</button>
+          <button onClick={handleLogout} className="logout">Logout</button>
         </nav>
       ) : (
         <nav>
+          <div className="nav-wrapper">
           <Link to="/login">Login</Link>
+          <br />
           <Link to="/signup">Signup</Link>
+          </div>
         </nav>
       )}
     </>

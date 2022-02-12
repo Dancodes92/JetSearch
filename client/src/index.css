@@ -15,7 +15,8 @@ code {
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  box-sizing: content-box;
+  background-color: #2f2f2f
 }
 
 html {
@@ -41,7 +42,21 @@ nav {
   background: #2f2f2f;
 }
 
+.logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  background: #fff;
+  color: #2f2f2f;
+  font-size: 20px;
+  cursor: pointer;
+}
 
+.logout:hover {
+  background: rgb(30, 48, 187);
+  color: #2f2f2f;
+}
 
 .App {
 display: flex;
@@ -78,11 +93,14 @@ a, a:visited {
 input[type="email"],
 input[type="text"],
 input[type="password"],
+input[type="number"],
+input[type="date"],
 button,
 textarea {
 font-size: 22px;
 padding: 3px;
 border-radius: 0.5rem;
+background-color: aliceblue;
 }
 
 label,
@@ -138,3 +156,40 @@ padding: 0.5rem;
 .line {
   display: inline-block;
 }
+
+/* style the search component to display a screen with airtport input, date, passengers, and then a box for the checkboxes */
+
+.search {
+  display: flex;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  margin-top: 5rem;
+}
+
+.search_form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  flex-grow: 1;
+  padding-bottom: 1rem;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  color: #2f2f2f;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: rgb(30, 48, 187);
+  color: white;
+}
+
+

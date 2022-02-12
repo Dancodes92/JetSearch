@@ -15,24 +15,32 @@ function Search() {
 
 
   // have a button for search after a form that uses axios to make a post request to the server "api/search" with the form data
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
+    try {
     setIsLoading(true);
     setIsError(false);
     const airport = Airport.toUpperCase();
-    axios.post("/api/search", {
+    const res = await axios.post("/api/search", {
       username,
       password,
       airport,
       date,
       passengers,
       categories
-    }).then(res => {
+    });
+      setAirport("");
+      setDate("");
+      setPassengers(null);
+      setCategories([]);
       setFlights(res.data);
       console.log("data", res.data);
       setIsLoading(false);
     }
-    );
+    catch (err) {
+      setIsError(true);
+      setIsLoading(false);
+    }
   };
 
   console.log("data", flights);
@@ -65,13 +73,21 @@ function Search() {
     }
   };
 
+ //on page load, clear the form
+  React.useEffect(() => {
+    setAirport("");
+    setDate("");
+    setPassengers(null);
+    setCategories([]);
+  }, []);
+
+
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div className="container">
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
+    <div className="search">
+        <div className="search_container">
+          <form onSubmit={handleSubmit} className="search_form">
+            <div className="airport">
               <label htmlFor="Airport">Airport</label>
               <input
                 type="text"
@@ -318,20 +334,20 @@ function Search() {
                 </label>
               </div>
             </div>
-
+          {Airport && passengers && categories.length > 0 && (
             <button type="submit" className="btn btn-primary">
               Search
             </button>
+          )}
           </form>
         </div>
-      </header>
       <div className="container">
         {isLoading ? (
           <div>Loading...</div>
         ) : isError ? (
           <div>Something went wrong...</div>
         ) : (
-          <div>
+          <div className='search_results'>
             <h1>Results</h1>
             <ul>
               {allFlights?.map((flight, index) => (
