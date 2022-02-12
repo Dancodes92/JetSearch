@@ -7,6 +7,7 @@ import SignUp from "./components/SignUp";
 import Layout from "./components/Layout";
 import Missing from "./components/Missing";
 import Unauthorized from "./components/Unauthorized";
+import Results from "./components/Results";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         {/* protect */}
         <Route element={<RequireAuth />}>
           <Route path="/search" element={<Search />} />
+          <Route path="/results" element={<Results />} />
         </Route>
         {/* catch */}
         <Route path="*" element={<Missing />} />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Search() {
   const [flights, setFlights] = useState([]);
@@ -11,6 +12,8 @@ function Search() {
   const [categories, setCategories] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
 
 
 
@@ -36,6 +39,8 @@ function Search() {
       setFlights(res.data);
       console.log("data", res.data);
       setIsLoading(false);
+      //navigate to the results page and pass the data as props
+      navigate("/results", { state: { flights: res.data } });
     }
     catch (err) {
       setIsError(true);
@@ -43,7 +48,6 @@ function Search() {
     }
   };
 
-  console.log("data", flights);
   // concat all the flights arrays into one array
   const allFlights = flights.reduce((acc, curr) => {
     return acc.concat(curr);
@@ -74,12 +78,12 @@ function Search() {
   };
 
  //on page load, clear the form
-  React.useEffect(() => {
-    setAirport("");
-    setDate("");
-    setPassengers(null);
-    setCategories([]);
-  }, []);
+  // React.useEffect(() => {
+  //   setAirport("");
+  //   setDate("");
+  //   setPassengers(null);
+  //   setCategories([]);
+  // }, []);
 
 
 
@@ -347,20 +351,9 @@ function Search() {
         ) : isError ? (
           <div>Something went wrong...</div>
         ) : (
-          <div className='search_results'>
+          <div>
             <h1>Results</h1>
-            <ul>
-              {allFlights?.map((flight, index) => (
-                <li key={index}>
-                  company: {flight.company}
-                  <br />
-                  jetType: {flight.jet}
-                  <br />
-                </li>
-              ))}
-
-            </ul>
-          </div>
+            </div>
         )}
       </div>
     </div>
