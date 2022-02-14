@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   // display a login / signup button if not logged in, if logged in display a logout button remove

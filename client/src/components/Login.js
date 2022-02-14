@@ -36,7 +36,7 @@ const Login = () => {
       setAuth({ email, pwd, token });
       setEmail("");
       setPwd("");
-      navigate("/search");
+      navigate("/");
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
@@ -62,12 +62,11 @@ const Login = () => {
       </p>
       <h1>Sign In</h1>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="username">Username:</label>
+        <label htmlFor="username">Email:</label>
         <input
-          type="text"
+          type="Email"
           id="username"
           ref={userRef}
-          autoComplete="off"
           onChange={e => setEmail(e.target.value)}
           value={email}
           required

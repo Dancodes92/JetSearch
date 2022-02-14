@@ -22,11 +22,10 @@ function Results() {
           </li>
         ))}
       </ul>
-      <Link to="/search">Search Again</Link>
+      <Link to="/">Search Again</Link>
     </div>
   );
 }
-
 
 export default Results;
 

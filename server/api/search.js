@@ -4,11 +4,11 @@ module.exports = router;
 
 router.post("/", async (req, res, next) => {
   try {
-    const { username, password, airport, date, passengers, categories } =
+    const { email, password, airport, date, passengers, categories } =
       req.body;
     console.log(req.body);
     const startSearch = await flightListPro(
-      username,
+      email,
       password,
       airport,
       date,
@@ -22,7 +22,7 @@ router.post("/", async (req, res, next) => {
 });
 
 const flightListPro = async (
-  username,
+  email,
   password,
   airport,
   date,
