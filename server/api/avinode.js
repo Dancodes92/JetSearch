@@ -15,36 +15,41 @@ const checkCredetials = async (email, password) => {
   await page.click(
     "body > div.avi-page > div > div > div > div > form > div.avi-button-group.avi-is-section-group > div > button"
   );
-  // if this selector shows "body > div.avi-page > div > div > div > div > div" throw error
-  const x = await page.evaluate(() => {
-    console.log(document.querySelector("body > div.avi-page > div > div > div > div > div").innerText);
-    if(document.querySelector("body > div.avi-page > div > div > div > div > div").innerText === "Invalid credentials") {
-      return false
-    } else {
-      return true;
-    }
-  });
 
-  // await browser.close();
- return x;
-  } catch (err) {
+  await page.waitForTimeout(1000);
+
+const x = await page.$("#bulletin-tab-4wMRuakn537mSeNkPaIJMA > div");
+
+  if (x) {
+    console.log("logged in");
+    await browser.close();
+    return "logged in";
+
+  } else {
+
+    console.log("not logged in");
+    await browser.close();
     return false;
+
+
+  }
+  } catch (err) {
+    console.log(err)
   }
 }
 
 
 
+
+
+
+
 router.post('/', async (req, res, next) => {
   try {
-    const { email, password } = req.body
-    if(await checkCredetials(email, password)) {
-      res.send(true).status(200)
-    } else {
-      res.send(false).status(401)
-    }
+    res.send(await checkCredetials(req.body.email, req.body.password))
   } catch (err) {
-    res.status(500)
+    next(err);
   }
-})
+});
 
 

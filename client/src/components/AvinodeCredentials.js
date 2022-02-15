@@ -25,7 +25,8 @@ function AvinodeCredentials({
         email,
         password: pwd,
       });
-      if (response.data) {
+      if (response.data === "logged in") {
+        console.log("response", response.data);
         setAvinodeEmail(email);
         setAvinodePwd(pwd);
         setIsValidCredentials(true);
