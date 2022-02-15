@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from "react";
 import {
   faCheck,
   faTimes,
@@ -8,7 +8,7 @@ import {
   faFontAwesomeIcon,
   FontAwesomeIcon,
 } from "@fortawesome/react-fontawesome";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
   const userRef = useRef();
@@ -32,7 +32,6 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
   useEffect(() => {
     setErrMsg("");
   }, [email, pwd, matchPwd]);
-
 
   return (
     <section>
@@ -92,10 +91,12 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
           <FontAwesomeIcon icon={faInfoCircle} />
           Password does not match!
         </p>
-        <button disabled={!email || !pwd || !validMatch ? true : false}
-        onClick={() => {
-          onNextStep()
-        }}>
+        <button
+          disabled={!email || !pwd || !validMatch ? true : false}
+          onClick={() => {
+            onNextStep();
+          }}
+        >
           Next
         </button>
       </form>
@@ -107,7 +108,7 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
         </span>
       </p>
     </section>
-  )
+  );
 }
 
-export default EmailandPassword
+export default EmailandPassword;

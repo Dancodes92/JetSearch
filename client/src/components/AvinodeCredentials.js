@@ -51,7 +51,6 @@ function AvinodeCredentials({
 
   if (errMsg) {
     setTimeout(() => {
-
       setErrMsg("");
     }, 3000);
 
@@ -81,7 +80,9 @@ function AvinodeCredentials({
     <>
       {errMsg && <p>{errMsg}</p>}
       <section>
-        <h1>Enter Avinode Credentials</h1>
+        <h1>
+          Enter <span className="italic"> Avinode.com </span> Credentials
+        </h1>
         <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email: </label>
           <input
@@ -106,10 +107,11 @@ function AvinodeCredentials({
           </div>
         </form>
         <p>
-          Need an Account?
           <br />
           <span className="line">
-            <Link to="/signup">Sign Up</Link>
+            <span style={{ cursor: "pointer" }} onClick={onPrevStep}>
+              Back
+            </span>
           </span>
         </p>
       </section>

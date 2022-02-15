@@ -9,9 +9,9 @@ async function seed() {
       User.create({
         email: "dan@mail.com",
         password: "123",
-        avinodeUserName: "dan",
+        avinodeEmail: "dan",
         avinodePassword: "123",
-        flightListProUserName: "dan",
+        flightListProEmail: "dan",
         flightListProPassword: "123",
       }),
     ]);

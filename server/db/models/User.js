@@ -19,22 +19,22 @@ const User = db.define("user", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  // avinodeUserName: {
-  //   type: DataTypes.STRING,
-  //   allowNull: false,
-  // },
-  // avinodePassword: {
-  //   type: DataTypes.STRING,
-  //   allowNull: false,
-  // },
-  // flightListProUserName: {
-  //   type: DataTypes.STRING,
-  //   allowNull: false,
-  // },
-  // flightListProPassword: {
-  //   type: DataTypes.STRING,
-  //   allowNull: false,
-  // },
+  avinodeEmail: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  avinodePassword: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  flightListProEmail: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  flightListProPassword: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
 module.exports = User;

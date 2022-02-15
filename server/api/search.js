@@ -22,8 +22,10 @@ router.post("/", async (req, res, next) => {
 });
 
 const flightListPro = async (
-  email,
-  password,
+  avinodeEmail,
+  avinodePassword,
+  flightListProEmail,
+  flightListProPassword,
   airport,
   date,
   passengers,

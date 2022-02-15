@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +13,24 @@ function Search() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+
   const navigate = useNavigate();
+
+  // get the user credentials
+  const getCredentials = async () => {
+    const response = await axios.get("/auth/me", {
+      headers: {
+        Authorization: localStorage.getItem("token")
+        },
+        });
+    console.log("response", response);
+  };
+
+  useEffect(() => {
+    getCredentials();
+  }, []);
+
+
 
   // have a button for search after a form that uses axios to make a post request to the server "api/search" with the form data
   const handleSubmit = async e => {

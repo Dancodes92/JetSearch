@@ -5,7 +5,7 @@ module.exports = router
 const checkCredetials = async (email, password) => {
   try {
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     const page = await browser.newPage();
@@ -16,7 +16,7 @@ const checkCredetials = async (email, password) => {
     "body > div.avi-page > div > div > div > div > form > div.avi-button-group.avi-is-section-group > div > button"
   );
 
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(2000);
 
 const x = await page.$("#bulletin-tab-4wMRuakn537mSeNkPaIJMA > div");
 
@@ -37,11 +37,6 @@ const x = await page.$("#bulletin-tab-4wMRuakn537mSeNkPaIJMA > div");
     console.log(err)
   }
 }
-
-
-
-
-
 
 
 router.post('/', async (req, res, next) => {
