@@ -22,10 +22,8 @@ router.post("/", async (req, res, next) => {
 });
 
 const flightListPro = async (
-  avinodeEmail,
-  avinodePassword,
-  flightListProEmail,
-  flightListProPassword,
+  email,
+  password,
   airport,
   date,
   passengers,
@@ -40,10 +38,10 @@ const flightListPro = async (
 
   const page = await browser.newPage();
   await page.goto("https://flightlistpro.com/index.php");
-  await page.setViewport({ width: 1297, height: 679 });
+  // await page.setViewport({ width: 1297, height: 679 });
 
-  await page.type("#username", "pschneider@luxury.aero"); //use environment variable for this
-  await page.type("#password", "Spacecowboy989!"); //use environment variable for this
+  await page.type("#username", "pschneider@luxury.aero");
+  await page.type("#password", "Spacecowboy989!");
   await page.click("table > tbody > tr > td:nth-child(5) > input");
   // await page.waitForNavigation();
 
@@ -92,7 +90,7 @@ const flightListPro = async (
   await page.waitForSelector(".tablecl > tbody > tr > td > .button");
   await page.click(".tablecl > tbody > tr > td > .button");
 
-  await page.waitForNavigation();
+  // await page.waitForNavigation();
 
   let allSelects = [];
   // theres a way to do this with recursion

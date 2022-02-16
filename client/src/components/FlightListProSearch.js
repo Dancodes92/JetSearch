@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Spinner from "./Spinner";
 
 function Search() {
   const [flights, setFlights] = useState([]);
@@ -12,6 +13,8 @@ function Search() {
   const [categories, setCategories] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const[avinodeEmail, setAvinodeEmail] = useState("");
+  const[flightListProEmail, setFlightListProEmail] = useState("");
 
 
   const navigate = useNavigate();
@@ -23,7 +26,8 @@ function Search() {
         Authorization: localStorage.getItem("token")
         },
         });
-    console.log("response", response);
+    setAvinodeEmail(response.data.avinodeEmail);
+    setFlightListProEmail(response.data.flightListProEmail);
   };
 
   useEffect(() => {
@@ -55,7 +59,7 @@ function Search() {
       console.log("data", res.data);
       setIsLoading(false);
       //navigate to the results page and pass the data as props
-      navigate("/results", { state: { flights: res.data } });
+      navigate("/results", { state: { flights: res.data, airport: airport } });
     } catch (err) {
       setIsError(true);
       setIsLoading(false);
@@ -90,20 +94,23 @@ function Search() {
     }
   };
 
-  //on page load, clear the form
-  // React.useEffect(() => {
-  //   setAirport("");
-  //   setDate("");
-  //   setPassengers(null);
-  //   setCategories([]);
-  // }, []);
+  if(isLoading) {
+    return (
+      <Spinner />
+    );
+  }
 
   return (
     <div className="search">
       <div className="search_container">
+        {/* <div>
+          <p>avinode: {avinodeEmail}</p>
+          <p>flightListPro: {flightListProEmail}</p>
+        </div> */}
         <form onSubmit={handleSubmit} className="search_form">
+          <div className="input_container">
           <div className="airport">
-            <label htmlFor="Airport">Airport</label>
+            <label htmlFor="Airport">Airport (ICAO)</label>
             <input
               type="text"
               className="form-control"
@@ -135,6 +142,7 @@ function Search() {
               placeholder="Passengers"
               onChange={handleChange}
             />
+          </div>
           </div>
           <div className="form-group-checkbox">
             <label htmlFor="category">Aircraft Category</label>
@@ -357,9 +365,7 @@ function Search() {
         </form>
       </div>
       <div className="container">
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : isError ? (
+        {isError ? (
           <div>Something went wrong...</div>
         ) : (
           <div></div>

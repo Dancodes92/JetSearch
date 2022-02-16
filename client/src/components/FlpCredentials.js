@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-
+import Spinner from "./Spinner";
 
 function FlpCredentials({
   onNextStep,
@@ -54,7 +54,7 @@ function FlpCredentials({
   if (errMsg) {
     setTimeout(() => {
       setErrMsg("");
-    }, 3000);
+    }, 2000);
 
     return (
       <section>
@@ -66,18 +66,14 @@ function FlpCredentials({
   if (isValidCredentials) {
     return (
       <section>
-        <p>Valid Credentials</p>
+        <h2>Valid Credentials</h2>
         {sendToNextStep()}
       </section>
     );
   }
 
   if (loading) {
-    return (
-      <section>
-        <p>Loading...</p>
-      </section>
-    );
+    return <Spinner />;
   }
 
   return (

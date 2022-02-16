@@ -1,10 +1,9 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 
 function Results() {
   const location = useLocation();
   console.log("location", location);
-
 
   //concat the arrays from the location.state.flights into one array
   let flightArray = [];
@@ -13,19 +12,18 @@ function Results() {
   }
   console.log("flightArray", flightArray);
   return (
-    <div>
-      <h1>Results</h1>
-      <ul>
+    <div className="results">
+      <h1 className="results-title">Results</h1>
+      <div className="results_list">
         {flightArray.map((result, i) => (
-          <li key={i}>
-            {result.company}
-          </li>
+          <div key={i}>
+            <div><span style={{ color:"dodgerblue" }}>{result.company}</span> <br />Jet: {result.jet}</div>
+          </div>
         ))}
-      </ul>
+      </div>
       <Link to="/">Search Again</Link>
     </div>
   );
 }
 
 export default Results;
-
