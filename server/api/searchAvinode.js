@@ -5,20 +5,22 @@ const avinodeSearcher = async (email, password) => {
   });
 
   const page = await browser.newPage();
+  // await page.setViewport({ width: 1306, height: 844 });
   await page.goto("https://marketplace.avinode.com/sso/mvc/login");
   await page.type("#username", "pschneider@luxury.aero"); //use environment variable for this
   await page.type("#password", "Luxury1!"); //use environment variable for this
   await page.click(
     "body > div.avi-page > div > div > div > div > form > div.avi-button-group.avi-is-section-group > div > button"
   );
-  await page.waitForTimeout(1000);
+  await page.waitForNavigation();
 
   await page.goto(
     "https://marketplace.avinode.com/marketplace/mvc/search#preSearch"
   );
 
-  await page.type("#segments\\[0\\]\\.startAirportSearchValue", "SFO");
-  await page.type("#segments\\[0\\]\\.endAirportSearchValue", "LAX");
+  await page.setViewport({ width: 1306, height: 844 });
+  await page.type("#segments\\[0\\]\\.startAirportSearchValue", "LAX");
+  await page.type("#segments\\[0\\]\\.endAirportSearchValue", "JFK");
   await page.click("#segments\\[0\\]\\.dateTime\\.date", { clickCount: 2 });
   await page.type("#segments\\[0\\]\\.dateTime\\.date", "032222");
   await page.click("#segments\\[0\\]\\.dateTime\\.time", { clickCount: 3 });
@@ -27,18 +29,134 @@ const avinodeSearcher = async (email, password) => {
   await page.type("#segments\\[0\\]\\.paxCount", "3");
   await page.click("#aircraftCategory");
   await page.click(
-    "body > div.avi-drop-down-container > div > div:nth-child(5) > div"
+    "body > div.avi-drop-down-container > div > div:nth-child(1) > div"
   );
 
+  // click the search button
   await page.waitForSelector(
-    "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div.avi-flex-grid.avi-vertical-flow-none > div:nth-child(4) > div > button"
+    "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(6) > div > button"
   );
   await page.click(
-    "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div.avi-flex-grid.avi-vertical-flow-none > div:nth-child(4) > div > button"
+    "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(6) > div > button"
   );
-  await page.waitForSelector("body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-first-level-collapsable-page-section.avi-is-horizontal-flow-half > div > div > div.avi-first-level-collapsable-page-section-content-wrapper > div > div:nth-child(5) > div > div:nth-child(2) > div > div:nth-child(1) > div")
 
-  await page.click("body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-first-level-collapsable-page-section.avi-is-horizontal-flow-half > div > div > div.avi-first-level-collapsable-page-section-content-wrapper > div > div:nth-child(5) > div > div:nth-child(2) > div > div:nth-child(1) > div")
+  // select category of jet
 
+  await page.waitForSelector(
+    "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-first-level-collapsable-page-section.avi-is-horizontal-flow-half > div > div > div.avi-page-header > div > span > svg > circle"
+  );
+  await page.click(
+    "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-first-level-collapsable-page-section.avi-is-horizontal-flow-half > div > div > div.avi-page-header > div > span > svg > circle"
+  );
+
+  // array of all the jet categories
+  const userSelections = ["Heavy jet", "Midsize jet"];
+  ////////////////////////////////////////////////////////////////////////////////
+  const jetCategories = await page.$$eval(
+    "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-first-level-collapsable-page-section.avi-is-horizontal-flow-half > div > div > div.avi-first-level-collapsable-page-section-content-wrapper > div > div:nth-child(5) > div > div:nth-child(2) > div > div > div",
+    elements => {
+      let jetObj = {};
+      for (let i = 0; i < elements.length; i++) {
+        jetObj[elements[i].innerText] =
+          "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-first-level-collapsable-page-section.avi-is-horizontal-flow-half > div > div > div.avi-first-level-collapsable-page-section-content-wrapper > div > div:nth-child(5) > div > div:nth-child(2) > div > div:nth-child(" +
+          (i + 1) +
+          ") > div";
+      }
+      return jetObj;
+    }
+  );
+  console.log(jetCategories); // this is the object of all the jet categories and their selector
+
+  // loop through userSelections array and click each value in the jetCategories object whose key matches the value in the userSelections array
+  const startSelecting = async () => {
+    let selections = [];
+    for (let i = 0; i < userSelections.length; i++) {
+      await page.waitForSelector(jetCategories[userSelections[i]]);
+      await page.click(jetCategories[userSelections[i]]);
+      // get only the ".t-company-name" with the parent class of "row avi-list-item avi-list-item-expandable"
+      // scroll to the bottom of the page
+      await page.evaluate(() => {
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      const x = await page.$$eval(".t-company-link", elements => {
+        const getParentElement = element => {
+          // find the parent element which has the class "row avi-list-item avi-list-item-expandable"
+          let parent = element.parentElement;
+          while (
+            parent.className !== "row avi-list-item avi-list-item-expandable"
+          ) {
+            parent = parent.parentElement;
+          }
+          return parent;
+        };
+        const getChildElement = element => {
+          // find the last child element of the parent element
+          let child = element.children[element.children.length - 1];
+          // return the next child element of the last child element
+          return child.children[0];
+        };
+
+        const getAircraftName = element => {
+          // get the 2nd child element of the parent element
+          let child = element.children[1];
+          // get the <a> element of child
+          return child.children[0].innerText;
+        };
+
+        let companyNames = [];
+        for (let i = 0; i < elements.length; i++) {
+          // if companyNames array.lenght is >= 30, break the loop
+          if (companyNames.length >= 30) {
+            break;
+          }
+          if (
+            elements[i].parentElement.parentElement.parentElement.parentElement
+              .parentElement.className ===
+              "row avi-list-item avi-list-item-expandable" ||
+            elements[i].parentElement.parentElement.parentElement.parentElement
+              .className === "row avi-list-item avi-list-item-expandable"
+          ) {
+            let companyName = elements[i].innerText;
+            let par = getParentElement(elements[i]);
+            let button = getChildElement(par);
+            let aircraftName = getAircraftName(par);
+            let operatorAndJet = companyName + " " + aircraftName;
+            if (!companyNames.includes(operatorAndJet)) {
+              button.click();
+              companyNames.push(operatorAndJet);
+            }
+          }
+        }
+        return companyNames;
+      });
+      selections.push(x);
+      await page.waitForSelector(
+        "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
+      );
+      await page.click(
+        "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
+      );
+
+      // evaluate the page to find the send request button with the class "t-form-submit"
+      await page.evaluate(() => {
+        let button = document.querySelector(".t-form-submit");
+        button.click();
+      });
+
+
+      await page.waitForTimeout(2000);
+
+      await page.waitForSelector("#avi-icon-close");
+      await page.click("#avi-icon-close");
+
+      await page.waitForSelector(jetCategories[userSelections[i]]);
+      await page.click(jetCategories[userSelections[i]]);
+    }
+    console.log(selections);
+  };
+
+  await startSelecting();
+  await browser.close();
 }
 

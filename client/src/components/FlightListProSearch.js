@@ -13,9 +13,8 @@ function Search() {
   const [categories, setCategories] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const[avinodeEmail, setAvinodeEmail] = useState("");
-  const[flightListProEmail, setFlightListProEmail] = useState("");
-
+  const [avinodeEmail, setAvinodeEmail] = useState("");
+  const [flightListProEmail, setFlightListProEmail] = useState("");
 
   const navigate = useNavigate();
 
@@ -23,9 +22,9 @@ function Search() {
   const getCredentials = async () => {
     const response = await axios.get("/auth/me", {
       headers: {
-        Authorization: localStorage.getItem("token")
-        },
-        });
+        Authorization: localStorage.getItem("token"),
+      },
+    });
     setAvinodeEmail(response.data.avinodeEmail);
     setFlightListProEmail(response.data.flightListProEmail);
   };
@@ -33,8 +32,6 @@ function Search() {
   useEffect(() => {
     getCredentials();
   }, []);
-
-
 
   // have a button for search after a form that uses axios to make a post request to the server "api/search" with the form data
   const handleSubmit = async e => {
@@ -94,10 +91,8 @@ function Search() {
     }
   };
 
-  if(isLoading) {
-    return (
-      <Spinner />
-    );
+  if (isLoading) {
+    return <Spinner />;
   }
 
   return (
@@ -109,43 +104,43 @@ function Search() {
         </div> */}
         <form onSubmit={handleSubmit} className="search_form">
           <div className="input_container">
-          <div className="airport">
-            <label htmlFor="Airport">Airport (ICAO)</label>
-            <input
-              type="text"
-              className="form-control"
-              id="Airport"
-              name="Airport"
-              placeholder="Airport"
-              onChange={handleChange}
-              value={Airport.toLocaleUpperCase()}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="date">Date</label>
-            <input
-              type="date"
-              className="form-control"
-              id="date"
-              name="date"
-              placeholder="Date"
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="passengers">Passengers</label>
-            <input
-              type="number"
-              className="form-control"
-              id="passengers"
-              name="passengers"
-              placeholder="Passengers"
-              onChange={handleChange}
-            />
-          </div>
+            <div className="airport">
+              <label htmlFor="Airport" className="input_label">Airport (ICAO)</label>
+              <input
+                type="text"
+                className="form-control"
+                id="Airport"
+                name="Airport"
+                placeholder="Airport"
+                onChange={handleChange}
+                value={Airport.toLocaleUpperCase()}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="date" className="input_label">Date</label>
+              <input
+                type="date"
+                className="form-control"
+                id="date"
+                name="date"
+                placeholder="Date"
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="passengers" className="input_label">Passengers</label>
+              <input
+                type="number"
+                className="form-control"
+                id="passengers"
+                name="passengers"
+                placeholder="Passengers"
+                onChange={handleChange}
+              />
+            </div>
           </div>
           <div className="form-group-checkbox">
-            <label htmlFor="category">Aircraft Category</label>
+            <label htmlFor="category" className="category-title">Aircraft Category</label>
 
             <div className="form-check">
               <input
@@ -365,11 +360,7 @@ function Search() {
         </form>
       </div>
       <div className="container">
-        {isError ? (
-          <div>Something went wrong...</div>
-        ) : (
-          <div></div>
-        )}
+        {isError ? <div>Something went wrong...</div> : <div></div>}
       </div>
     </div>
   );
