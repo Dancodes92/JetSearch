@@ -5,7 +5,14 @@ const {
 } = require("../db");
 module.exports = router;
 
-const avinodeSearcher = async (email, password) => {
+const avinodeSearcher = async (avinodeEmail,
+  avinodePassword,
+  from,
+  to,
+  date,
+  time,
+  pax,
+  categories) => {
   const browser = await puppeteer.launch({
     headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -14,8 +21,8 @@ const avinodeSearcher = async (email, password) => {
   const page = await browser.newPage();
   // await page.setViewport({ width: 1306, height: 844 });
   await page.goto("https://marketplace.avinode.com/sso/mvc/login");
-  await page.type("#username", "pschneider@luxury.aero"); //use environment variable for this
-  await page.type("#password", "Luxury1!"); //use environment variable for this
+  await page.type("#username", avinodeEmail); //use environment variable for this
+  await page.type("#password", avinodePassword); //use environment variable for this
   await page.click(
     "body > div.avi-page > div > div > div > div > form > div.avi-button-group.avi-is-section-group > div > button"
   );
@@ -26,14 +33,14 @@ const avinodeSearcher = async (email, password) => {
   );
 
   await page.setViewport({ width: 1306, height: 844 });
-  await page.type("#segments\\[0\\]\\.startAirportSearchValue", "LAX");
-  await page.type("#segments\\[0\\]\\.endAirportSearchValue", "JFK");
+  await page.type("#segments\\[0\\]\\.startAirportSearchValue", from);
+  await page.type("#segments\\[0\\]\\.endAirportSearchValue", to);
   await page.click("#segments\\[0\\]\\.dateTime\\.date", { clickCount: 2 });
   await page.type("#segments\\[0\\]\\.dateTime\\.date", "032222");
   await page.click("#segments\\[0\\]\\.dateTime\\.time", { clickCount: 3 });
-  await page.type("#segments\\[0\\]\\.dateTime\\.time", "1200");
+  await page.type("#segments\\[0\\]\\.dateTime\\.time", time);
   await page.click("#segments\\[0\\]\\.paxCount", { clickCount: 2 });
-  await page.type("#segments\\[0\\]\\.paxCount", "3");
+  await page.type("#segments\\[0\\]\\.paxCount", pax);
   await page.click("#aircraftCategory");
   await page.click(
     "body > div.avi-drop-down-container > div > div:nth-child(1) > div"
@@ -57,7 +64,7 @@ const avinodeSearcher = async (email, password) => {
   );
 
   // array of all the jet categories
-  const userSelections = ["Heavy jet", "Midsize jet"];
+  const userSelections = categories
   ////////////////////////////////////////////////////////////////////////////////
   const jetCategories = await page.$$eval(
     "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-first-level-collapsable-page-section.avi-is-horizontal-flow-half > div > div > div.avi-first-level-collapsable-page-section-content-wrapper > div > div:nth-child(5) > div > div:nth-child(2) > div > div > div",
@@ -112,6 +119,7 @@ const avinodeSearcher = async (email, password) => {
         };
 
         let companyNames = [];
+        let flightArr = [];
         for (let i = 0; i < elements.length; i++) {
           // if companyNames array.lenght is >= 30, break the loop
           if (companyNames.length >= 30) {
@@ -132,10 +140,11 @@ const avinodeSearcher = async (email, password) => {
             if (!companyNames.includes(operatorAndJet)) {
               button.click();
               companyNames.push(operatorAndJet);
+              flightArr.push({ company: companyName, jet: aircraftName });
             }
           }
         }
-        return companyNames;
+        return flightArr;
       });
       selections.push(x);
       // await page.waitForSelector(
@@ -175,7 +184,6 @@ router.post("/", async (req, res) => {
     if(!user) {
       return res.status(401).send({error: "User not found"});
     }
-    console.log("user", user);
     console.log(user.avinodeEmail,
       user.avinodePassword,
       from,
@@ -184,20 +192,17 @@ router.post("/", async (req, res) => {
       time,
       pax,
       categories)
-    // const selections = await avinodeSearcher(
-    //   user.avinodeEmail,
-    //   user.avinodePassword,
-    //   from,
-    //   to,
-    //   date,
-    //   time,
-    //   pax,
-    //   categories
-    // );
-    // res.status(200).json({
-    //   selections,
-    // });
-    res.send("ok");
+    const selections = await avinodeSearcher(
+      user.avinodeEmail,
+      user.avinodePassword,
+      from,
+      to,
+      date,
+      time,
+      pax,
+      categories
+    );
+    res.status(200).send(selections);
   } catch (err) {
     res.status(500).json({
       message: err.message,

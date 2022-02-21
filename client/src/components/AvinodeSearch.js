@@ -38,7 +38,7 @@ function AvinodeSearch() {
         },
           },);
       console.log("response", response);
-      if (response.data === "success") {
+      if (response.status === 200) {
         setLoading(false);
         navigate("/results", { state: { flights: response.data } });
       } else {
@@ -53,6 +53,17 @@ function AvinodeSearch() {
       }
     }
   };
+
+  const handleDate = e => {
+    // change the date format to mmddyy
+    const dateArr = e.target.value.split("-");
+    // change year to two digits
+    const year = dateArr[0].slice(2);
+    const newDate = `${dateArr[1]}${dateArr[2]}${year}`;
+    setDate(newDate);
+  };
+
+
 
   if(loading) {
     return <Spinner />
@@ -94,8 +105,7 @@ function AvinodeSearch() {
             className="form-control"
             id="date"
             placeholder="Date"
-            value={date}
-            onChange={e => setDate(e.target.value)}
+            onChange={handleDate}
           />
           <div className="form-group">
             <label htmlFor="time">Time</label>
