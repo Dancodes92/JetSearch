@@ -9,6 +9,7 @@ function Search() {
   const [isError, setIsError] = useState(false);
   const [Airport, setAirport] = useState("");
   const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
   const [passengers, setPassengers] = useState(null);
   const [categories, setCategories] = useState([]);
   const [username, setUsername] = useState("");
@@ -63,13 +64,6 @@ function Search() {
     }
   };
 
-  // concat all the flights arrays into one array
-  const allFlights = flights.reduce((acc, curr) => {
-    return acc.concat(curr);
-  }, []);
-
-  console.log("allFlights", allFlights);
-
   // handle the change of the form inputs
   const handleChange = e => {
     const { name, value } = e.target;
@@ -98,10 +92,6 @@ function Search() {
   return (
     <div className="search">
       <div className="search_container">
-        {/* <div>
-          <p>avinode: {avinodeEmail}</p>
-          <p>flightListPro: {flightListProEmail}</p>
-        </div> */}
         <form onSubmit={handleSubmit} className="search_form">
           <div className="input_container">
             <div className="airport">
@@ -124,6 +114,17 @@ function Search() {
                 id="date"
                 name="date"
                 placeholder="Date"
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="Time" className="input_label">Time</label>
+              <input
+                type="time"
+                className="form-control"
+                id="Time"
+                name="Time"
+                placeholder="Time"
                 onChange={handleChange}
               />
             </div>

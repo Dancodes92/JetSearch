@@ -11,29 +11,36 @@ function AvinodeSearch() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [pax, setPax] = useState("");
-  const [cat, setCat] = useState("");
+  const [categories, setCategories] = useState([]);
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     setErrMsg("");
-  }, [from, to, date, time, pax, cat]);
+  }, [from, to, date, time, pax, categories]);
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setLoading(true);
     try {
-      const response = await axios.post("/api/avinode/search", {
+      setLoading(true);
+      setErrMsg("");
+      const response = await axios.post("/api/searchAvinode", {
         from,
         to,
         date,
         time,
         pax,
-        cat,
-      });
+        categories,
+      }, {
+        headers: {
+          authorization: localStorage.getItem("token"),
+        },
+          },);
+      console.log("response", response);
       if (response.data === "success") {
-        navigate("results", { state: { flights: response.data } });
+        setLoading(false);
+        navigate("/results", { state: { flights: response.data } });
       } else {
         setErrMsg("there was an error");
       }
@@ -42,14 +49,21 @@ function AvinodeSearch() {
         setErrMsg("network error");
       } else {
         setErrMsg(err.response.data.message);
+        setLoading(false);
       }
     }
-    setLoading(false);
   };
+
+  if(loading) {
+    return <Spinner />
+  }
+
+  if(errMsg) {
+    return <div>{errMsg}</div>
+  }
 
   return (
     <div className="avinode-search">
-      <h1>Avinode Search</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="from">From</label>
@@ -58,7 +72,7 @@ function AvinodeSearch() {
             className="form-control"
             id="from"
             placeholder="From"
-            value={from}
+            value={from.toLocaleUpperCase()}
             onChange={e => setFrom(e.target.value)}
           />
         </div>
@@ -69,7 +83,7 @@ function AvinodeSearch() {
             className="form-control"
             id="to"
             placeholder="To"
-            value={to}
+            value={to.toLocaleUpperCase()}
             onChange={e => setTo(e.target.value)}
           />
         </div>
@@ -88,7 +102,7 @@ function AvinodeSearch() {
             <input
               type="time"
               className="form-control"
-              id="time"
+              id="Time"
               placeholder="Time"
               value={time}
               onChange={e => setTime(e.target.value)}
@@ -106,25 +120,230 @@ function AvinodeSearch() {
             onChange={e => setPax(e.target.value)}
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="cat">Cat</label>
-          <input
-            type="checkbox"
-            className="form-control"
-            id="cat"
-            placeholder="Cat"
-            value={cat}
-            onChange={e => setCat(e.target.value)}
-          />
+        <div className="form-group-checkbox">
+          <div className="form-group">
+            <h3 className="form-group-title">Categories</h3>
+            <div className="form-group-checkbox-container">
+              <div className="form-group-checkbox-item">
+                <input
+                  type="checkbox"
+                  id='Piston'
+                  value='Piston'
+                  onChange={e =>
+                    setCategories(
+                      e.target.checked
+                        ? [...categories, e.target.value]
+                        : categories.filter(cat => cat !== e.target.value)
+                    )
+                  }
+                />
+
+                <label htmlFor='Piston'>
+                  <span>
+                    <i className="fas fa-plane-departure">Piston</i>
+                  </span>
+
+                </label>
+              </div>
+              <div className="form-group-checkbox-item">
+                <input
+                  type="checkbox"
+                  id='Turbo prop'
+                  value='Turbo prop'
+                  onChange={e =>
+                    setCategories(
+                      e.target.checked
+                        ? [...categories, e.target.value]
+                        : categories.filter(cat => cat !== e.target.value)
+                    )
+                  }
+                />
+
+                <label htmlFor='Turbo prop'>
+                  <span>
+                    <i className="fas fa-plane-departure">Turbo prop</i>
+                  </span>
+
+                </label>
+              </div>
+              <div className="form-group-checkbox-item">
+                <input
+                  type="checkbox"
+                  id='Entry level jet (VLJ)'
+                  value='Entry level jet (VLJ)'
+                  onChange={e =>
+                    setCategories(
+                      e.target.checked
+                        ? [...categories, e.target.value]
+                        : categories.filter(cat => cat !== e.target.value)
+                    )
+                  }
+                />
+
+                <label htmlFor='Entry level jet (VLJ)'>
+                  <span>
+                    <i className="fas fa-plane-departure">Entry level jet (VLJ)</i>
+                  </span>
+
+                </label>
+              </div>
+              <div className="form-group-checkbox-item">
+                <input
+                  type="checkbox"
+                  id='Light jet'
+                  value='Light jet'
+                  onChange={e =>
+                    setCategories(
+                      e.target.checked
+                        ? [...categories, e.target.value]
+                        : categories.filter(cat => cat !== e.target.value)
+                    )
+                  }
+                />
+
+                <label htmlFor='Light jet'>
+                  <span>
+                    <i className="fas fa-plane-departure">Light jet</i>
+                  </span>
+
+                </label>
+              </div>
+              <div className="form-group-checkbox-item">
+                <input
+                  type="checkbox"
+                  id='Super light jet'
+                  value='Super light jet'
+                  onChange={e =>
+                    setCategories(
+                      e.target.checked
+                        ? [...categories, e.target.value]
+                        : categories.filter(cat => cat !== e.target.value)
+                    )
+                  }
+                />
+
+                <label htmlFor='Super light jet'>
+                  <span>
+                    <i className="fas fa-plane-departure">Super light jet</i>
+                  </span>
+
+                </label>
+              </div>
+              <div className="form-group-checkbox-item">
+                <input
+                  type="checkbox"
+                  id='Midsize jet'
+                  value='Midsize jet'
+                  onChange={e =>
+                    setCategories(
+                      e.target.checked
+                        ? [...categories, e.target.value]
+                        : categories.filter(cat => cat !== e.target.value)
+                    )
+                  }
+                />
+
+                <label htmlFor='Midsize jet'>
+                  <span>
+                    <i className="fas fa-plane-departure">Midsize jet</i>
+                  </span>
+
+                </label>
+              </div>
+              <div className="form-group-checkbox-item">
+                <input
+                  type="checkbox"
+                  id='Super midsize jet'
+                  value='Super midsize jet'
+                  onChange={e =>
+                    setCategories(
+                      e.target.checked
+                        ? [...categories, e.target.value]
+                        : categories.filter(cat => cat !== e.target.value)
+                    )
+                  }
+                />
+
+                <label htmlFor='Super midsize jet'>
+                  <span>
+                    <i className="fas fa-plane-departure">Super midsize jet</i>
+                  </span>
+
+                </label>
+              </div>
+              <div className="form-group-checkbox-item">
+                <input
+                  type="checkbox"
+                  id='Heavy jet'
+                  value='Heavy jet'
+                  onChange={e =>
+                    setCategories(
+                      e.target.checked
+                        ? [...categories, e.target.value]
+                        : categories.filter(cat => cat !== e.target.value)
+                    )
+                  }
+                />
+
+                <label htmlFor='Heavy jet'>
+                  <span>
+                    <i className="fas fa-plane-departure">Heavy jet</i>
+                  </span>
+
+                </label>
+              </div>
+              <div className="form-group-checkbox-item">
+                <input
+                  type="checkbox"
+                  id='Ultra long range'
+                  value='Ultra long range'
+                  onChange={e =>
+                    setCategories(
+                      e.target.checked
+                        ? [...categories, e.target.value]
+                        : categories.filter(cat => cat !== e.target.value)
+                    )
+                  }
+                />
+
+                <label htmlFor='Ultra long range'>
+                  <span>
+                    <i className="fas fa-plane-departure">Ultra long range</i>
+                  </span>
+                </label>
+              </div>
+              <div className="form-group-checkbox-item">
+                <input
+                  type="checkbox"
+                  id='VIP airliner'
+                  value='VIP airliner'
+                  onChange={e =>
+                    setCategories(
+                      e.target.checked
+                        ? [...categories, e.target.value]
+                        : categories.filter(cat => cat !== e.target.value)
+                    )
+                  }
+                />
+
+                <label htmlFor='VIP airliner'>
+                  <span>
+                    <i className="fas fa-plane-departure">VIP airliner</i>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
+        {to && from && date && time && categories.length > 0 && (
         <button type="submit" className="btn btn-primary">
-          Search
+          Add Flight
         </button>
+        )}
       </form>
-      {errMsg && <p>{errMsg}</p>}
-      {loading && <Spinner />}
     </div>
   );
 }
+
 
 export default AvinodeSearch;

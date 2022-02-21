@@ -1,3 +1,10 @@
+const router = require("express").Router();
+const puppeteer = require("puppeteer");
+const {
+  models: { User },
+} = require("../db");
+module.exports = router;
+
 const avinodeSearcher = async (email, password) => {
   const browser = await puppeteer.launch({
     headless: false,
@@ -68,8 +75,8 @@ const avinodeSearcher = async (email, password) => {
   console.log(jetCategories); // this is the object of all the jet categories and their selector
 
   // loop through userSelections array and click each value in the jetCategories object whose key matches the value in the userSelections array
+  let selections = [];
   const startSelecting = async () => {
-    let selections = [];
     for (let i = 0; i < userSelections.length; i++) {
       await page.waitForSelector(jetCategories[userSelections[i]]);
       await page.click(jetCategories[userSelections[i]]);
@@ -131,32 +138,69 @@ const avinodeSearcher = async (email, password) => {
         return companyNames;
       });
       selections.push(x);
-      await page.waitForSelector(
-        "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
-      );
-      await page.click(
-        "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
-      );
+      // await page.waitForSelector(
+      //   "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
+      // );
+      // await page.click(
+      //   "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
+      // );
 
-      // evaluate the page to find the send request button with the class "t-form-submit"
-      await page.evaluate(() => {
-        let button = document.querySelector(".t-form-submit");
-        button.click();
-      });
+      // // evaluate the page to find the send request button with the class "t-form-submit"
+      // await page.evaluate(() => {
+      //   let button = document.querySelector(".t-form-submit");
+      //   button.click();
+      // });
 
+      // await page.waitForTimeout(2000);
 
-      await page.waitForTimeout(2000);
-
-      await page.waitForSelector("#avi-icon-close");
-      await page.click("#avi-icon-close");
+      // await page.waitForSelector("#avi-icon-close");
+      // await page.click("#avi-icon-close");
 
       await page.waitForSelector(jetCategories[userSelections[i]]);
       await page.click(jetCategories[userSelections[i]]);
     }
-    console.log(selections);
+    return;
   };
 
   await startSelecting();
   await browser.close();
-}
+  return selections;
+};
 
+router.post("/", async (req, res) => {
+  try {
+    const token = req.headers.authorization;
+    const user = await User.findByToken(token);
+    const { from, to, date, time, pax, categories } = req.body;
+    if(!user) {
+      return res.status(401).send({error: "User not found"});
+    }
+    console.log("user", user);
+    console.log(user.avinodeEmail,
+      user.avinodePassword,
+      from,
+      to,
+      date,
+      time,
+      pax,
+      categories)
+    // const selections = await avinodeSearcher(
+    //   user.avinodeEmail,
+    //   user.avinodePassword,
+    //   from,
+    //   to,
+    //   date,
+    //   time,
+    //   pax,
+    //   categories
+    // );
+    // res.status(200).json({
+    //   selections,
+    // });
+    res.send("ok");
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+});
