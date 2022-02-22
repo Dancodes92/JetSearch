@@ -1,18 +1,35 @@
 const router = require("express").Router();
 const puppeteer = require("puppeteer");
+const {
+  models: { User },
+} = require("../db");
 module.exports = router;
 
 router.post("/", async (req, res, next) => {
   try {
-    const { email, password, airport, date, passengers, categories } =
-      req.body;
-    console.log(req.body);
-    const startSearch = await flightListPro(
-      email,
-      password,
+    const token = req.headers.authorization;
+    const user = await User.findByToken(token);
+    const { airport, to, date, passengers, time, categories } = req.body;
+    if (!user) {
+      return res.status(401).send({ error: "Not Authorized" });
+    }
+    console.log(
+      user.flightListProEmail,
+      user.flightListProPassword,
       airport,
       date,
       passengers,
+      time,
+      categories
+    );
+    const startSearch = await flightListPro(
+      user.flightListProEmail,
+      user.flightListProPassword,
+      airport,
+      to,
+      date,
+      passengers,
+      time,
       categories
     );
     res.send(startSearch);
@@ -25,23 +42,24 @@ const flightListPro = async (
   email,
   password,
   airport,
+  to,
   date,
   passengers,
+  time,
   categories
 ) => {
   // headless mode
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
-
 
   const page = await browser.newPage();
   await page.goto("https://flightlistpro.com/index.php");
   // await page.setViewport({ width: 1297, height: 679 });
 
-  await page.type("#username", "pschneider@luxury.aero");
-  await page.type("#password", "Spacecowboy989!");
+  await page.type("#username", email);
+  await page.type("#password", password);
   await page.click("table > tbody > tr > td:nth-child(5) > input");
   // await page.waitForNavigation();
 
@@ -67,8 +85,8 @@ const flightListPro = async (
       "Mid Jet": "#catTable > tbody > tr > #td_9 > input",
       "Light Jet": "#catTable > tbody > tr > #td_8 > input",
       "Very Light Jet": "#catTable > tbody > tr > #td_14 > input",
-      "Turboprop": "#catTable > tbody > tr > #td_12 > input",
-      "Piston": "#catTable > tbody > tr > #td_10 > input",
+      Turboprop: "#catTable > tbody > tr > #td_12 > input",
+      Piston: "#catTable > tbody > tr > #td_10 > input",
       "VIP Airliner": "#catTable > tbody > tr > #td_15 > input",
       "Jet Airliner": "#catTable > tbody > tr > #td_7 > input",
       "Regional Jet Airliner": "#catTable > tbody > tr > #td_19 > input",
@@ -85,17 +103,16 @@ const flightListPro = async (
 
   await clickCheckboxes();
 
-  await page.screenshot({ path: "1.png" });
-
   await page.waitForSelector(".tablecl > tbody > tr > td > .button");
   await page.click(".tablecl > tbody > tr > td > .button");
 
-  // await page.waitForNavigation();
+  await page.waitForNavigation();
 
   let allSelects = [];
   // theres a way to do this with recursion
   const flightPicker = await page.evaluate(() => {
     let arr = [];
+    let opAndJet = [];
     const companyName = document.querySelectorAll(
       "#frmSelect > table > tbody > tr > td:nth-child(2) > a"
     );
@@ -109,13 +126,10 @@ const flightListPro = async (
     for (let i = 0; i < companyName.length - 1; i++) {
       let curCompanyName = companyName[i];
       let curJet = jetType[i];
-      let nextCompanyName = companyName[i + 1];
-      let nextJet = jetType[i + 1];
-      if (
-        `${curCompanyName.innerText} ${curJet.innerText}` !==
-        `${nextCompanyName.innerText} ${nextJet.innerText}`
-      ) {
+      let compAndType = `${curCompanyName.innerText} ${curJet.innerText}`;
+      if (!opAndJet.includes(compAndType)) {
         button[i].click();
+        opAndJet.push(`${curCompanyName.innerText} ${curJet.innerText}`);
         arr.push({
           company: curCompanyName.innerText,
           jet: curJet.innerText,
@@ -128,6 +142,8 @@ const flightListPro = async (
   allSelects.push(flightPicker);
 
   // got the the next page of flights and re run the function
+  // if the selector is not there, then we are on the last page
+  while(await page.$("#frmSelect > table > tbody > tr:nth-child(55) > td > span:nth-child(2) > a")) {
   await page.waitForSelector(
     "#frmSelect > table > tbody > tr:nth-child(55) > td > span:nth-child(2) > a"
   );
@@ -139,6 +155,7 @@ const flightListPro = async (
 
   const flightPicker2 = await page.evaluate(() => {
     let arr = [];
+    let opAndJet = [];
     const companyName = document.querySelectorAll(
       "#frmSelect > table > tbody > tr > td:nth-child(2) > a"
     );
@@ -154,10 +171,9 @@ const flightListPro = async (
       let curJet = jetType[i];
       let nextCompanyName = companyName[i + 1];
       let nextJet = jetType[i + 1];
-      if (
-        `${curCompanyName.innerText} ${curJet.innerText}` !==
-        `${nextCompanyName.innerText} ${nextJet.innerText}`
-      ) {
+      let compAndType = `${curCompanyName.innerText} ${curJet.innerText}`;
+      if (!opAndJet.includes(compAndType)) {
+        opAndJet.push(`${curCompanyName.innerText} ${curJet.innerText}`);
         button[i].click();
         arr.push({
           company: curCompanyName.innerText,
@@ -170,6 +186,11 @@ const flightListPro = async (
 
   allSelects.push(flightPicker2);
   /////
+  }
+
+  while(await page.$("#frmSelect > table > tbody > tr:nth-child(55) > td > span:nth-child(5) > a")) {
+
+
 
   // go to the next page of flights
   await page.waitForSelector(
@@ -184,6 +205,7 @@ const flightListPro = async (
 
   const flightPicker3 = await page.evaluate(() => {
     let arr = [];
+    let opAndJet = [];
     const companyName = document.querySelectorAll(
       "#frmSelect > table > tbody > tr > td:nth-child(2) > a"
     );
@@ -199,10 +221,10 @@ const flightListPro = async (
       let curJet = jetType[i];
       let nextCompanyName = companyName[i + 1];
       let nextJet = jetType[i + 1];
-      if (
-        `${curCompanyName.innerText} ${curJet.innerText}` !==
-        `${nextCompanyName.innerText} ${nextJet.innerText}`
-      ) {
+      let compAndType = `${curCompanyName.innerText} ${curJet.innerText}`;
+
+      if (!opAndJet.includes(compAndType)) {
+        opAndJet.push(`${curCompanyName.innerText} ${curJet.innerText}`);
         button[i].click();
         arr.push({
           company: curCompanyName.innerText,
@@ -214,34 +236,65 @@ const flightListPro = async (
   });
 
   allSelects.push(flightPicker3);
+  break;
+}
 
   page.waitForTimeout(500);
 
-  await page.screenshot({ path: "1.png" });
 
   await page.click("#sendFeedback");
 
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(2000);
 
-  // await page.$eval("#myModal > div > div > div.modal-header > button", el =>
-  //   el.click()
-  // );
+  if (await page.$(".modal-open")) {
+    console.log("modal is there");
+    await page.waitForSelector("#myModal > div > div > div.modal-header > button");
+    await page.click("#myModal > div > div > div.modal-header > button");
+  }
+  // click anywhere to close on the page
+  await page.click("body");
 
-  await page.waitForSelector(
-    "#myModal > div > div > div.modal-header > button"
-  );
 
-  await page.click("#myModal > div > div > div.modal-header > button");
 
-  await browser.close();
+  // if (isModel) {
+  //   await page.waitForSelector("#myModal > div > div > div.modal-header > button");
+  //   await page.click("#myModal > div > div > div.modal-header > button");
+  // }
+
+  // const isModalOpen = await page.$("#myModal > div > div > div.modal-header > button");
+  // if (isModalOpen) {
+  //   await page.click("#myModal > div > div > div.modal-header > button");
+  // }
+
+  await page.waitForTimeout(500);
+
+  const textBox = await page.$("#comments");
+  await textBox.type(`Hello,
+  Please quote the following-
+
+    From: ${airport}
+    To: ${to}
+    Date: ${date}
+    Time: ${time}
+    Passengers: ${passengers}
+
+  Thank you.`);
+
+  // await page.waitForTimeout(500);
+  // await page.waitForSelector("#comments");
+  // await page.type("#comments", `Hello,
+  // Please quote the following-
+
+  //   From: ${airport}
+  //   To: ${to}
+  //   Date: ${date}
+  //   Time: ${time}
+  //   Passengers: ${passengers}
+
+  // Thank you.`);
+
+
+
+  // await browser.close();
   return allSelects;
 };
-
-router.post("/yo", (req, res, next) => {
-  try {
-    console.log(req.body);
-  } catch (err) {
-    console.log(err);
-    next(err);
-  }
-});

@@ -14,7 +14,7 @@ const avinodeSearcher = async (avinodeEmail,
   pax,
   categories) => {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -36,7 +36,7 @@ const avinodeSearcher = async (avinodeEmail,
   await page.type("#segments\\[0\\]\\.startAirportSearchValue", from);
   await page.type("#segments\\[0\\]\\.endAirportSearchValue", to);
   await page.click("#segments\\[0\\]\\.dateTime\\.date", { clickCount: 2 });
-  await page.type("#segments\\[0\\]\\.dateTime\\.date", "032222");
+  await page.type("#segments\\[0\\]\\.dateTime\\.date", date);
   await page.click("#segments\\[0\\]\\.dateTime\\.time", { clickCount: 3 });
   await page.type("#segments\\[0\\]\\.dateTime\\.time", time);
   await page.click("#segments\\[0\\]\\.paxCount", { clickCount: 2 });
@@ -79,7 +79,7 @@ const avinodeSearcher = async (avinodeEmail,
       return jetObj;
     }
   );
-  console.log(jetCategories); // this is the object of all the jet categories and their selector
+
 
   // loop through userSelections array and click each value in the jetCategories object whose key matches the value in the userSelections array
   let selections = [];

@@ -7,32 +7,15 @@ function Search() {
   const [flights, setFlights] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [Airport, setAirport] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [passengers, setPassengers] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [avinodeEmail, setAvinodeEmail] = useState("");
-  const [flightListProEmail, setFlightListProEmail] = useState("");
+
 
   const navigate = useNavigate();
-
-  // get the user credentials
-  const getCredentials = async () => {
-    const response = await axios.get("/auth/me", {
-      headers: {
-        Authorization: localStorage.getItem("token"),
-      },
-    });
-    setAvinodeEmail(response.data.avinodeEmail);
-    setFlightListProEmail(response.data.flightListProEmail);
-  };
-
-  useEffect(() => {
-    getCredentials();
-  }, []);
 
   // have a button for search after a form that uses axios to make a post request to the server "api/search" with the form data
   const handleSubmit = async e => {
@@ -40,18 +23,22 @@ function Search() {
     try {
       setIsLoading(true);
       setIsError(false);
-      const airport = Airport.toUpperCase();
+      const airport = from.toUpperCase();
       const res = await axios.post("/api/search", {
-        username,
-        password,
         airport,
+        to,
         date,
         passengers,
+        time,
         categories,
-      });
-      setAirport("");
+      }, {
+        headers: { authorization: localStorage.getItem("token") }
+        });
+      setFrom("");
+      setTo("");
       setDate("");
       setPassengers(null);
+      setTime("");
       setCategories([]);
       setFlights(res.data);
       console.log("data", res.data);
@@ -65,16 +52,18 @@ function Search() {
   };
 
   // handle the change of the form inputs
-  const handleChange = e => {
-    const { name, value } = e.target;
-    if (name === "Airport") {
-      setAirport(value);
-    } else if (name === "date") {
-      setDate(value);
-    } else if (name === "passengers") {
-      setPassengers(value);
-    }
-  };
+  // const handleChange = e => {
+  //   const { name, value } = e.target;
+  //   if (name === "Airport") {
+  //     setAirport(value);
+  //   } else if (name === "date") {
+  //     setDate(value);
+  //   } else if (name === "passengers") {
+  //     setPassengers(value);
+  //   } else if (name === "Time") {
+  //     setTime(value);
+  //   }
+  // };
 
   const handleCheckbox = e => {
     const { name, checked } = e.target;
@@ -95,15 +84,27 @@ function Search() {
         <form onSubmit={handleSubmit} className="search_form">
           <div className="input_container">
             <div className="airport">
-              <label htmlFor="Airport" className="input_label">Airport (ICAO)</label>
+              <label htmlFor="Airport" className="input_label">From (ICAO)</label>
               <input
                 type="text"
                 className="form-control"
-                id="Airport"
-                name="Airport"
-                placeholder="Airport"
-                onChange={handleChange}
-                value={Airport.toLocaleUpperCase()}
+                id="from"
+                name="from"
+                placeholder="from"
+                onChange={e => setFrom(e.target.value)}
+                value={from.toLocaleUpperCase()}
+              />
+            </div>
+            <div className="airport">
+              <label htmlFor="Airport" className="input_label">To (ICAO)</label>
+              <input
+                type="text"
+                className="form-control"
+                id="to"
+                name="to"
+                placeholder="to"
+                onChange={e => setTo(e.target.value)}
+                value={to.toLocaleUpperCase()}
               />
             </div>
             <div className="form-group">
@@ -114,7 +115,7 @@ function Search() {
                 id="date"
                 name="date"
                 placeholder="Date"
-                onChange={handleChange}
+                onChange={e => setDate(e.target.value)}
               />
             </div>
             <div className="form-group">
@@ -125,7 +126,7 @@ function Search() {
                 id="Time"
                 name="Time"
                 placeholder="Time"
-                onChange={handleChange}
+                onChange={e => setTime(e.target.value)}
               />
             </div>
             <div className="form-group">
@@ -136,18 +137,20 @@ function Search() {
                 id="passengers"
                 name="passengers"
                 placeholder="Passengers"
-                onChange={handleChange}
+                onChange={e => setPassengers(e.target.value)}
               />
             </div>
           </div>
-          <div className="form-group-checkbox">
+          <div className="checkbox_container">
             <label htmlFor="category" className="category-title">Aircraft Category</label>
+
+          <div className="form-group-checkbox">
 
             <div className="form-check">
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Ultra Long Range"
                 name="Ultra Long Range"
                 onChange={handleCheckbox}
                 checked={categories.includes("Ultra Long Range")}
@@ -161,7 +164,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Heavy Jet"
                 name="Heavy Jet"
                 onChange={handleCheckbox}
                 checked={categories.includes("Heavy Jet")}
@@ -175,7 +178,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Super-Mid Jet"
                 name="Super-Mid Jet"
                 onChange={handleCheckbox}
                 checked={categories.includes("Super-Mid Jet")}
@@ -189,7 +192,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Mid Jet"
                 name="Mid Jet"
                 onChange={handleCheckbox}
                 checked={categories.includes("Mid Jet")}
@@ -203,7 +206,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Light Jet"
                 name="Light Jet"
                 onChange={handleCheckbox}
                 checked={categories.includes("Light Jet")}
@@ -217,7 +220,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Very Light Jet"
                 name="Very Light Jet"
                 onChange={handleCheckbox}
                 checked={categories.includes("Very Light Jet")}
@@ -231,7 +234,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Turboprop"
                 name="Turboprop"
                 onChange={handleCheckbox}
                 checked={categories.includes("Turboprop")}
@@ -245,7 +248,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Piston"
                 name="Piston"
                 onChange={handleCheckbox}
                 checked={categories.includes("Piston")}
@@ -259,7 +262,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="VIP Airline"
                 name="VIP Airliner"
                 onChange={handleCheckbox}
                 checked={categories.includes("VIP Airliner")}
@@ -273,7 +276,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Jet Airliner"
                 name="Jet Airliner"
                 onChange={handleCheckbox}
                 checked={categories.includes("Jet Airliner")}
@@ -287,7 +290,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Regional Jet Airliner"
                 name="Regional Jet Airliner"
                 onChange={handleCheckbox}
                 checked={categories.includes("Regional Jet Airliner")}
@@ -301,7 +304,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Turboprop Airliner"
                 name="Turboprop Airliner"
                 onChange={handleCheckbox}
                 checked={categories.includes("Turboprop Airliner")}
@@ -315,7 +318,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Piston Airliner"
                 name="Piston Airliner"
                 onChange={handleCheckbox}
                 checked={categories.includes("Piston Airliner")}
@@ -329,7 +332,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Helicopter - Twin"
                 name="Helicopter - Twin"
                 onChange={handleCheckbox}
                 checked={categories.includes("Helicopter - Twin")}
@@ -343,7 +346,7 @@ function Search() {
               <input
                 type="checkbox"
                 className="form-check-input"
-                id="category"
+                id="Helicopter - Single"
                 name="Helicopter - Single"
                 onChange={handleCheckbox}
                 checked={categories.includes("Helicopter - Single")}
@@ -353,7 +356,8 @@ function Search() {
               </label>
             </div>
           </div>
-          {Airport && passengers && categories.length > 0 && (
+        </div>
+          {from && to && passengers && categories.length > 0 && (
             <button type="submit" className="btn btn-primary">
               Search
             </button>
