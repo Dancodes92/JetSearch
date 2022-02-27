@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const db = require("../db");
 const JWT = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const User = db.define("user", {
   email: {
@@ -76,6 +76,7 @@ User.findByToken = async function (token) {
 };
 
 //hooks
+
 
 const hashPassword = async user => {
   if (user.changed("password")) {

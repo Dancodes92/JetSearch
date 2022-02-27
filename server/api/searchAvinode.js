@@ -5,16 +5,20 @@ const {
 } = require("../db");
 module.exports = router;
 
-const avinodeSearcher = async (avinodeEmail,
+const avinodeSearcher = async (
+  avinodeEmail,
   avinodePassword,
   from,
   to,
   date,
   time,
+  date2,
+  time2,
   pax,
-  categories) => {
+  categories
+) => {
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -31,28 +35,59 @@ const avinodeSearcher = async (avinodeEmail,
   await page.goto(
     "https://marketplace.avinode.com/marketplace/mvc/search#preSearch"
   );
-
+  //if its a round trip then we need to click on the round trip button
   await page.setViewport({ width: 1306, height: 844 });
-  await page.type("#segments\\[0\\]\\.startAirportSearchValue", from);
-  await page.type("#segments\\[0\\]\\.endAirportSearchValue", to);
-  await page.click("#segments\\[0\\]\\.dateTime\\.date", { clickCount: 2 });
-  await page.type("#segments\\[0\\]\\.dateTime\\.date", date);
-  await page.click("#segments\\[0\\]\\.dateTime\\.time", { clickCount: 3 });
-  await page.type("#segments\\[0\\]\\.dateTime\\.time", time);
-  await page.click("#segments\\[0\\]\\.paxCount", { clickCount: 2 });
-  await page.type("#segments\\[0\\]\\.paxCount", pax);
-  await page.click("#aircraftCategory");
-  await page.click(
-    "body > div.avi-drop-down-container > div > div:nth-child(1) > div"
-  );
+  if (date2) {
+    await page.click(
+      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-tab-menu.avi-is-in-page.avi-is-full-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > span:nth-child(2) > span"
+    );
 
-  // click the search button
+    await page.waitForTimeout(2000);
+    await page.type("#segments\\[0\\]\\.startAirportSearchValue", from);
+    await page.type("#segments\\[0\\]\\.endAirportSearchValue", to);
+    await page.click("#segments\\[0\\]\\.dateTime\\.date", { clickCount: 2 });
+    await page.type("#segments\\[0\\]\\.dateTime\\.date", date);
+    await page.click("#segments\\[0\\]\\.dateTime\\.time", { clickCount: 3 });
+    await page.type("#segments\\[0\\]\\.dateTime\\.time", time);
+    await page.click("#segments\\[1\\]\\.dateTime\\.date", { clickCount: 2 }); //
+    await page.type("#segments\\[1\\]\\.dateTime\\.date", date2); //
+    await page.click("#segments\\[1\\]\\.dateTime\\.time", { clickCount: 3 }); //
+    await page.type("#segments\\[1\\]\\.dateTime\\.time", time2); //
+    await page.click("#segments\\[0\\]\\.paxCount", { clickCount: 2 });
+    await page.type("#segments\\[0\\]\\.paxCount", pax);
+    await page.click("#aircraftCategory");
+    await page.click(
+      "body > div.avi-drop-down-container > div > div:nth-child(1) > div"
+    );
+    await page.waitForSelector(
+      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(7) > div > button"
+    );
+    await page.click(
+      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(7) > div > button"
+    );
+  } else {
+    await page.type("#segments\\[0\\]\\.startAirportSearchValue", from);
+    await page.type("#segments\\[0\\]\\.endAirportSearchValue", to);
+    await page.click("#segments\\[0\\]\\.dateTime\\.date", { clickCount: 2 });
+    await page.type("#segments\\[0\\]\\.dateTime\\.date", date);
+    await page.click("#segments\\[0\\]\\.dateTime\\.time", { clickCount: 3 });
+    await page.type("#segments\\[0\\]\\.dateTime\\.time", time);
+    await page.click("#segments\\[0\\]\\.paxCount", { clickCount: 2 });
+    await page.type("#segments\\[0\\]\\.paxCount", pax);
+    await page.click("#aircraftCategory");
+    await page.click(
+      "body > div.avi-drop-down-container > div > div:nth-child(1) > div"
+    );
+     // click the search button
   await page.waitForSelector(
     "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(6) > div > button"
   );
   await page.click(
     "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(6) > div > button"
   );
+  }
+
+
 
   // select category of jet
 
@@ -64,7 +99,7 @@ const avinodeSearcher = async (avinodeEmail,
   );
 
   // array of all the jet categories
-  const userSelections = categories
+  const userSelections = categories;
   ////////////////////////////////////////////////////////////////////////////////
   const jetCategories = await page.$$eval(
     "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-first-level-collapsable-page-section.avi-is-horizontal-flow-half > div > div > div.avi-first-level-collapsable-page-section-content-wrapper > div > div:nth-child(5) > div > div:nth-child(2) > div > div > div",
@@ -79,7 +114,6 @@ const avinodeSearcher = async (avinodeEmail,
       return jetObj;
     }
   );
-
 
   // loop through userSelections array and click each value in the jetCategories object whose key matches the value in the userSelections array
   let selections = [];
@@ -180,18 +214,22 @@ router.post("/", async (req, res) => {
   try {
     const token = req.headers.authorization;
     const user = await User.findByToken(token);
-    const { from, to, date, time, pax, categories } = req.body;
-    if(!user) {
-      return res.status(401).send({error: "User not found"});
+    const { from, to, date, time, date2, time2, pax, categories } = req.body;
+    if (!user) {
+      return res.status(401).send({ error: "User not found" });
     }
-    console.log(user.avinodeEmail,
+    console.log(
+      user.avinodeEmail,
       user.avinodePassword,
       from,
       to,
       date,
       time,
+      date2,
+      time2,
       pax,
-      categories)
+      categories
+    );
     const selections = await avinodeSearcher(
       user.avinodeEmail,
       user.avinodePassword,
@@ -199,6 +237,8 @@ router.post("/", async (req, res) => {
       to,
       date,
       time,
+      date2,
+      time2,
       pax,
       categories
     );
