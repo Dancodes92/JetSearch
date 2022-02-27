@@ -6,6 +6,10 @@ const morgan = require("morgan");
 const path = require("path");
 require('dotenv').config();
 const { db } = require("./db");
+const cors = require("cors");
+
+
+app.use(cors());// for cross origin resource sharing
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());

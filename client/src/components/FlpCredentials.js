@@ -22,7 +22,7 @@ function FlpCredentials({
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("/api/flp", {
+      const response = await axios.post("https://jetsearcher.herokuapp.com/api/flp", {
         email,
         password: pwd,
       });

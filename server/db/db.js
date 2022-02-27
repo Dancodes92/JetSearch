@@ -11,7 +11,7 @@ if (process.env.Logging === "true") {
   delete config.logging;
 }
 
-if (process.env.DB_URL) {
+if (process.env.DATABASE_URL) {
   config.dialectOptions = {
     ssl: {
       rejectUnauthorized: false,
@@ -19,6 +19,6 @@ if (process.env.DB_URL) {
   };
 }
 
-const db = new Sequelize(process.env.DB_URL || `postgres://localhost:5432/${dbName}`, config);
+const db = new Sequelize(process.env.DATABASE_URL || `postgres://localhost:5432/${dbName}`, config);
 
 module.exports = db;

@@ -22,7 +22,7 @@ function AvinodeCredentials({
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("/api/avinode", {
+      const response = await axios.post("https://jetsearcher.herokuapp.com/api/avinode", {
         email,
         password: pwd,
       });
