@@ -1,12 +1,10 @@
 import React from "react";
-import { Link, useNavigate, useMatch,
-  useResolvedPath, } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Spinner from "./Spinner";
 
-
-function AvinodeSearch() {
+function AvinodeRoundTrip() {
   //from, to, date, time, pax, always select minimum cat
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -20,10 +18,9 @@ function AvinodeSearch() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-const canClick = [from, to, date, time, pax].every(
-    item => item !== ""
+  const canClick = [from, to, date, date2, time2, time, pax].every(
+    item => item !== "" && item !== "none"
   );
-
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -74,6 +71,15 @@ const canClick = [from, to, date, time, pax].every(
     setDate(newDate);
   };
 
+  const handleDate2 = e => {
+    // change the date format to mmddyy
+    const dateArr = e.target.value.split("-");
+    // change year to two digits
+    const year = dateArr[0].slice(2);
+    const newDate = `${dateArr[1]}${dateArr[2]}${year}`;
+    setDate2(newDate);
+  };
+
   if (loading) {
     return <Spinner />;
   }
@@ -87,17 +93,17 @@ const canClick = [from, to, date, time, pax].every(
   }
 
   return (
-    <section>
+    <section className="search">
       <div className="link-container">
-        <Link to="/avroundtrip">
-          <h5 className="roundtrip-btn">Go To Round Trip</h5>
+        <Link to="/avinodeSearch" className="roundtrip-btn">
+          <h5>Go To One Way</h5>
         </Link>
       </div>
       <div className="avinode-search">
         <form onSubmit={handleSubmit}>
           <div className="text-inputs">
             <div className="form-group">
-              <label htmlFor="from">From</label>
+              <label htmlFor="from">From
               <input
                 type="text"
                 className="form-control"
@@ -106,9 +112,10 @@ const canClick = [from, to, date, time, pax].every(
                 value={from.toLocaleUpperCase()}
                 onChange={e => setFrom(e.target.value)}
               />
+              </label>
             </div>
             <div className="form-group">
-              <label htmlFor="to">To</label>
+              <label htmlFor="to">To
               <input
                 type="text"
                 className="form-control"
@@ -117,11 +124,12 @@ const canClick = [from, to, date, time, pax].every(
                 value={to.toLocaleUpperCase()}
                 onChange={e => setTo(e.target.value)}
               />
+              </label>
             </div>
               </div>
               <div className="text-inputs">
             <div className="form-group">
-              <label htmlFor="date">Date</label>
+              <label htmlFor="date">Date
               <input
                 type="date"
                 className="form-control"
@@ -129,9 +137,10 @@ const canClick = [from, to, date, time, pax].every(
                 placeholder="Date"
                 onChange={handleDate}
               />
+              </label>
             </div>
             <div className="form-group">
-              <label htmlFor="time">Time</label>
+              <label htmlFor="time">Time
               <input
                 type="time"
                 className="form-control"
@@ -140,19 +149,46 @@ const canClick = [from, to, date, time, pax].every(
                 value={time}
                 onChange={e => setTime(e.target.value)}
               />
+              </label>
             </div>
-          <div className="form-group">
-            <label htmlFor="pax">Pax</label>
-            <input
-              type="number"
-              className="form-control-pax"
-              id="pax"
-              placeholder="Pax"
-              value={pax}
-              onChange={e => setPax(e.target.value)}
-              />
-          </div>
               </div>
+          <div className="text-inputs">
+            <div className="form-group">
+              <label htmlFor="date2">Date
+              <input
+                type="date"
+                className="form-control"
+                id="date2"
+                placeholder="Date"
+                onChange={handleDate2}
+              />
+              </label>
+            </div>
+            <div className="form-group">
+              <label htmlFor="time2">Time
+              <input
+                type="Time"
+                className="form-control"
+                id="Time"
+                placeholder="Time"
+                value={time2}
+                onChange={e => setTime2(e.target.value)}
+              />
+              </label>
+            </div>
+            <div className="form-group">
+              <label htmlFor="pax">Pax
+              <input
+                type="number"
+                className="form-control-pax"
+                id="pax"
+                placeholder="Pax"
+                value={pax}
+                onChange={e => setPax(e.target.value)}
+              />
+              </label>
+            </div>
+          </div>
           <div className="form-group-checkbox">
             <div className="form-group">
               <h3 className="form-group-title">Categories</h3>
@@ -376,4 +412,4 @@ const canClick = [from, to, date, time, pax].every(
   );
 }
 
-export default AvinodeSearch;
+export default AvinodeRoundTrip;

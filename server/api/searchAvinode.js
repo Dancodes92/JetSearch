@@ -181,23 +181,23 @@ const avinodeSearcher = async (
         return flightArr;
       });
       selections.push(x);
-      // await page.waitForSelector(
-      //   "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
-      // );
-      // await page.click(
-      //   "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
-      // );
+      await page.waitForSelector(
+        "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
+      );
+      await page.click(
+        "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
+      );
 
-      // // evaluate the page to find the send request button with the class "t-form-submit"
-      // await page.evaluate(() => {
-      //   let button = document.querySelector(".t-form-submit");
-      //   button.click();
-      // });
+      // evaluate the page to find the send request button with the class "t-form-submit"
+      await page.evaluate(() => {
+        let button = document.querySelector(".t-form-submit");
+        button.click();
+      });
 
-      // await page.waitForTimeout(2000);
+      await page.waitForTimeout(2000);
 
-      // await page.waitForSelector("#avi-icon-close");
-      // await page.click("#avi-icon-close");
+      await page.waitForSelector("#avi-icon-close");
+      await page.click("#avi-icon-close");
 
       await page.waitForSelector(jetCategories[userSelections[i]]);
       await page.click(jetCategories[userSelections[i]]);

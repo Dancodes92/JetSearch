@@ -10,6 +10,8 @@ import Unauthorized from "./components/Unauthorized";
 import Results from "./components/Results";
 import FlightListProSearch from "./components/FlightListProSearch";
 import AvinodeSearch from "./components/AvinodeSearch";
+import AvinodeRoundTrip from "./components/AvinodeRoundTrip";
+import FlightListProSearchRoundTrip from "./components/FlightListProSearchRoundTrip";
 
 function App() {
   return (
@@ -22,7 +24,9 @@ function App() {
         <Route element={<RequireAuth />}>
           <Route path="/" element={<Home />} />
           <Route path="/flpSearch" element={<FlightListProSearch />} />
+          <Route path="/flpSearchroundtrip" element={<FlightListProSearchRoundTrip />} />
           <Route path="/avinodeSearch" element={<AvinodeSearch />} />
+          <Route path="/avroundtrip" element={<AvinodeRoundTrip />} />
           <Route path="/results" element={<Results />} />
         </Route>
         {/* catch */}

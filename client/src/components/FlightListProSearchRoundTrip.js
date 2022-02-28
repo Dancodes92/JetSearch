@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Spinner from "./Spinner";
 import { Link } from "react-router-dom";
 
-function Search() {
+function SearchRoundTrip() {
   const [flights, setFlights] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -49,6 +49,8 @@ function Search() {
       setTime("");
       setCategories([]);
       setFlights(res.data);
+      setDate2("");
+      setTime2("");
       console.log("data", res.data);
       setIsLoading(false);
       //navigate to the results page and pass the data as props
@@ -75,8 +77,8 @@ function Search() {
   return (
     <section className="search">
       <div className="link-container">
-        <Link to="/flpSearchroundtrip" className="roundtrip-btn">
-          <h5>Go To Round Trip</h5>
+        <Link to="/flpSearch" className="roundtrip-btn">
+          <h5>Go To One Way</h5>
         </Link>
       </div>
       <div className="avinode-search">
@@ -101,7 +103,6 @@ function Search() {
                 <div className="airport">
                   <label htmlFor="Airport" className="input_label">
                     To (ICAO)
-                  </label>
                   <input
                     type="text"
                     className="form-control"
@@ -110,14 +111,14 @@ function Search() {
                     placeholder="to"
                     onChange={e => setTo(e.target.value)}
                     value={to.toLocaleUpperCase()}
-                  />
+                    />
+                    </label>
                 </div>
               </div>
               <div className="text-inputs">
                 <div className="form-group">
                   <label htmlFor="date" className="input_label">
                     Date
-                  </label>
                   <input
                     type="date"
                     className="form-control"
@@ -125,12 +126,12 @@ function Search() {
                     name="date"
                     placeholder="Date"
                     onChange={e => setDate(e.target.value)}
-                  />
+                    />
+                    </label>
                 </div>
                 <div className="form-group">
                   <label htmlFor="Time" className="input_label">
                     Time
-                  </label>
                   <input
                     type="time"
                     className="form-control"
@@ -138,12 +139,40 @@ function Search() {
                     name="Time"
                     placeholder="Time"
                     onChange={e => setTime(e.target.value)}
-                  />
+                    />
+                    </label>
+                </div>
+              </div>
+              <div className="text-inputs">
+                <div className="form-group">
+                  <label htmlFor="date" className="input_label">
+                    Date
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="date2"
+                    name="date2"
+                    placeholder="Date"
+                    onChange={e => setDate2(e.target.value)}
+                    />
+                    </label>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="Time2" className="input_label">
+                    Time
+                  <input
+                    type="time"
+                    className="form-control"
+                    id="Time"
+                    name="Time2"
+                    placeholder="Time"
+                    onChange={e => setTime2(e.target.value)}
+                    />
+                    </label>
                 </div>
                 <div className="form-group">
                   <label htmlFor="passengers" className="input_label">
                     Pax
-                  </label>
                   <input
                     type="number"
                     className="form-control-pax"
@@ -151,7 +180,8 @@ function Search() {
                     name="passengers"
                     placeholder="Pax"
                     onChange={e => setPassengers(e.target.value)}
-                  />
+                    />
+                    </label>
                 </div>
               </div>
             </div>
@@ -383,4 +413,4 @@ function Search() {
   );
 }
 
-export default Search;
+export default SearchRoundTrip;

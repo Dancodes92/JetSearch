@@ -12,17 +12,17 @@ function Results() {
   }
   console.log("flightArray", flightArray);
   return (
-    <div className="results">
+    <section>
       <h1 className="results-title">Results</h1>
       <div className="results_list">
         {flightArray.map((result, i) => (
           <div key={i}>
-            <div><span style={{ color:"dodgerblue" }}>{result.company}</span> <br />Jet: {result.jet}</div>
+            <div><span style={{ color:"dodgerblue" }}>{result.company}</span> {result.jet}</div>
           </div>
         ))}
       </div>
       <Link to="/">Search Again</Link>
-    </div>
+      </section>
   );
 }
 

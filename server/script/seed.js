@@ -1,4 +1,7 @@
-const { db, User } = require("../db");
+const {
+  db,
+  models: { User },
+} = require("../db");
 
 async function seed() {
   try {

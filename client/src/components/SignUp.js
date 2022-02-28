@@ -89,7 +89,6 @@ function SignUp() {
     case 3:
       return (
         <FlpCredentials
-          onNextStep={onNextStep}
           onPrevStep={onPrevStep}
           flpemail={flpemail}
           flppwd={flppwd}

@@ -3,13 +3,9 @@ import { useState } from "react";
 import Spinner from "./Spinner";
 
 function FlpCredentials({
-  onNextStep,
   onPrevStep,
-  step,
   setFlpemail,
   setFlppwd,
-  flpemail,
-  flppwd,
   onSubmit,
 }) {
   const [email, setEmail] = useState("");
@@ -48,7 +44,7 @@ function FlpCredentials({
     //wait for 3 seconds then call onSubmit
     setTimeout(() => {
       onSubmit();
-    }, 3000);
+    }, 2000);
   };
 
   if (errMsg) {

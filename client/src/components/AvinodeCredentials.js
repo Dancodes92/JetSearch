@@ -47,7 +47,7 @@ function AvinodeCredentials({
   const sendToNextStep = () => {
     setTimeout(() => {
       onNextStep();
-    }, 3000);
+    }, 2000);
   };
 
   if (errMsg) {
@@ -65,10 +65,10 @@ function AvinodeCredentials({
   if (isValidCredentials) {
     return (
       <section>
-        <p>
+        <h2>
           Credentials are valid.
           {sendToNextStep()}
-        </p>
+        </h2>
       </section>
     );
   }
@@ -79,7 +79,7 @@ function AvinodeCredentials({
 
   return (
     <>
-      {errMsg && <p>{errMsg}</p>}
+      {errMsg && <h3>{errMsg}</h3>}
       <section>
         <h1>
           Enter <span className="italic"> Avinode.com </span> Credentials
