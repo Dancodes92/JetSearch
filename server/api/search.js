@@ -39,7 +39,9 @@ router.post("/", async (req, res, next) => {
     );
     res.send(startSearch);
   } catch (err) {
-    next(err);
+    res.status(500).json({
+      error: err.message,
+    })
   }
 });
 
@@ -70,7 +72,7 @@ const flightListPro = async (
   await page.click("table > tbody > tr > td:nth-child(5) > input");
   // await page.waitForNavigation();
 
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(3000);
 
   await page.waitForSelector("#code");
   await page.type("#code", airport);
@@ -112,9 +114,9 @@ const flightListPro = async (
 
   await page.waitForSelector(".tablecl > tbody > tr > td > .button");
   await page.click(".tablecl > tbody > tr > td > .button");
-///////////////////////////////////
-  // await page.waitForNavigation();
-///////////////////////////////////
+  ///////////////////////////////////
+  await page.waitForNavigation();
+  ///////////////////////////////////
   let allSelects = [];
   // theres a way to do this with recursion
   const flightPicker = await page.evaluate(() => {
@@ -269,9 +271,9 @@ const flightListPro = async (
 
   await page.waitForTimeout(500);
 
-  if(date2){
+  if (date2) {
     const textBox = await page.$("#comments");
-  await textBox.type(`Hello,
+    await textBox.type(`Hello,
   Please quote the following round trip-
 
     From: ${airport}
@@ -283,10 +285,9 @@ const flightListPro = async (
     Passengers: ${passengers}
 
   Thank you.`);
-
   } else {
-  const textBox = await page.$("#comments");
-  await textBox.type(`Hello,
+    const textBox = await page.$("#comments");
+    await textBox.type(`Hello,
   Please quote the following-
 
     From: ${airport}

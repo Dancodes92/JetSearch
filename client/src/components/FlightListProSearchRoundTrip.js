@@ -42,6 +42,8 @@ function SearchRoundTrip() {
           headers: { authorization: localStorage.getItem("token") },
         }
       );
+      if(res.status === 200) {
+
       setFrom("");
       setTo("");
       setDate("");
@@ -55,6 +57,10 @@ function SearchRoundTrip() {
       setIsLoading(false);
       //navigate to the results page and pass the data as props
       navigate("/results", { state: { flights: res.data, airport: airport } });
+      } else {
+        setIsError(true);
+      }
+
     } catch (err) {
       setIsError(true);
       setIsLoading(false);
@@ -73,6 +79,7 @@ function SearchRoundTrip() {
   if (isLoading) {
     return <Spinner />;
   }
+
 
   return (
     <section className="search">

@@ -30,7 +30,7 @@ const avinodeSearcher = async (
   await page.click(
     "body > div.avi-page > div > div > div > div > form > div.avi-button-group.avi-is-section-group > div > button"
   );
-  await page.waitForNavigation();
+  await page.waitForTimeout(3000);
 
   await page.goto(
     "https://marketplace.avinode.com/marketplace/mvc/search#preSearch"
@@ -78,16 +78,14 @@ const avinodeSearcher = async (
     await page.click(
       "body > div.avi-drop-down-container > div > div:nth-child(1) > div"
     );
-     // click the search button
-  await page.waitForSelector(
-    "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(6) > div > button"
-  );
-  await page.click(
-    "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(6) > div > button"
-  );
+    // click the search button
+    await page.waitForSelector(
+      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(6) > div > button"
+    );
+    await page.click(
+      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(6) > div > button"
+    );
   }
-
-
 
   // select category of jet
 
