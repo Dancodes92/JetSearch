@@ -36,7 +36,6 @@ const avinodeSearcher = async (
     "https://marketplace.avinode.com/marketplace/mvc/search#preSearch"
   );
   //if its a round trip then we need to click on the round trip button
-  await page.setViewport({ width: 1306, height: 844 });
   if (date2) {
     await page.click(
       "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-tab-menu.avi-is-in-page.avi-is-full-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > span:nth-child(2) > span"
@@ -80,10 +79,10 @@ const avinodeSearcher = async (
     );
     // click the search button
     await page.waitForSelector(
-      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(6) > div > button"
+      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div.avi-flex-grid.avi-vertical-flow-none > div:nth-child(4) > div > button"
     );
     await page.click(
-      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(6) > div > button"
+      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div.avi-flex-grid.avi-vertical-flow-none > div:nth-child(4) > div > button"
     );
   }
 
@@ -179,6 +178,9 @@ const avinodeSearcher = async (
         return flightArr;
       });
       selections.push(x);
+
+
+      /// clicks the button to open modal
       await page.waitForSelector(
         "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
       );
@@ -186,27 +188,50 @@ const avinodeSearcher = async (
         "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
       );
 
+
+
+      // click the text box
+      await page.waitForSelector("#buyerMessage");
+      await page.click("#buyerMessage");
+
+      await page.waitForTimeout(2000);
+
+
+
       // evaluate the page to find the send request button with the class "t-form-submit"
+
+      // await page.waitForSelector("#aviLightBoxContainer-4 > div > div > div > div > form");
+      // await page.click(
+      //   "#aviLightBoxContainer-4 > div > div > div > div > form"
+      // );
+
+      // await page.waitForTimeout(2000);
+
       await page.evaluate(() => {
         let button = document.querySelector(".t-form-submit");
+
         button.click();
       });
 
       await page.waitForTimeout(2000);
 
-      await page.waitForSelector("#avi-icon-close");
-      await page.click("#avi-icon-close");
+      // await page.waitForSelector("#avi-icon-close");
+      // await page.click("#avi-icon-close");
 
       await page.waitForSelector(jetCategories[userSelections[i]]);
       await page.click(jetCategories[userSelections[i]]);
+
+      await page.waitForTimeout(1000);
     }
     return;
   };
 
   await startSelecting();
-  await browser.close();
+  // await browser.close();
   return selections;
 };
+
+
 
 router.post("/", async (req, res) => {
   try {
