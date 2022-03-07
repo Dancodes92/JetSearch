@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import logo from "../2.png";
 
 function Navbar() {
-  // display a login / signup button if not logged in, if logged in display a logout button remove
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
 
@@ -22,20 +21,26 @@ function Navbar() {
         <nav>
           <div className="nav_links">
             <Link to="/">
-            <img src={logo} alt="logo" className="logo" />
+              <img src={logo} alt="logo" className="logo" />
             </Link>
 
-            <button onClick={handleLogout} className="logout">
+            <button onClick={handleLogout} className="logout-btn">
               Logout
             </button>
           </div>
         </nav>
       ) : (
         <nav>
-          <div className="nav-wrapper">
-            <Link to="/login">Login</Link>
-            <br />
-            <Link to="/signup">Signup</Link>
+          <div className="nav_links">
+            <Link to="/">
+              <img src={logo} alt="logo" className="logo" />
+            </Link>
+
+            <div className="nav-wrapper">
+              <Link to="/login" className="nav_link">Login</Link>
+              <br />
+              <Link to="/signup" className="nav_link">Signup</Link>
+            </div>
           </div>
         </nav>
       )}

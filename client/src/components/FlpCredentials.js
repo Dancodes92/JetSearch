@@ -76,37 +76,35 @@ function FlpCredentials({
     <>
       {errMsg && <p>{errMsg}</p>}
       <section>
-        <h1>
+      <div className="login-form">
+        <h1 className="login-title2">
           Enter <span className="italic"> FlightListPro.com </span> Credentials
         </h1>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="email">Email</label>
+        <form onSubmit={handleSubmit} className="form-container">
           <input
             type="email"
             id="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
+            placeholder="FLP Email"
           />
-          <label htmlFor="password">Password</label>
+          <br/>
           <input
             type="password"
             id="password"
             value={pwd}
             onChange={e => setPwd(e.target.value)}
             required
+            placeholder="FLP Password"
           />
           <br />
-          <button type="submit">Submit</button>
+          <div className="btn-wrapper2">
+            <button type="submit" className="forward">Submit</button>
+           <button type="button" onClick={onPrevStep} className="back">Back</button>
+          </div>
         </form>
-        <p>
-          <br />
-          <span className="line">
-            <span style={{ cursor: "pointer" }} onClick={onPrevStep}>
-              Back
-            </span>
-          </span>
-        </p>
+      </div>
       </section>
     </>
   );

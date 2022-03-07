@@ -81,11 +81,11 @@ function AvinodeCredentials({
     <>
       {errMsg && <h3>{errMsg}</h3>}
       <section>
-        <h1>
+        <div className="login-form">
+        <h1 className="login-title2">
           Enter <span className="italic"> Avinode.com </span> Credentials
         </h1>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="email">Email: </label>
+        <form onSubmit={handleSubmit} className="form-container" >
           <input
             type="email"
             id="email"
@@ -93,28 +93,23 @@ function AvinodeCredentials({
             onChange={e => setEmail(e.target.value)}
             required
             aria-describedby="uidnote"
+            placeholder="Avenode email"
           />
           <br />
-          <label htmlFor="password">Password: </label>
           <input
             type="password"
             id="password"
             required
             onChange={e => setPwd(e.target.value)}
+            placeholder="Avenode password"
           />
           <br />
-          <div>
-            <button type="submit">Check Credentials</button>
+          <div className="btn-wrapper2">
+            <button type="submit" className="forward">Submit</button>
+           <button type="button" onClick={onPrevStep} className="back">Back</button>
           </div>
         </form>
-        <p>
-          <br />
-          <span className="line">
-            <span style={{ cursor: "pointer" }} onClick={onPrevStep}>
-              Back
-            </span>
-          </span>
-        </p>
+        </div>
       </section>
     </>
   );

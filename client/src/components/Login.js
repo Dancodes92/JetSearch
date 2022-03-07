@@ -29,7 +29,7 @@ const Login = () => {
     try {
       const response = await axios.post(
         "https://jetsearcher.herokuapp.com/auth/login",
-        { email, password: pwd },
+        { email, password: pwd }
       );
       window.localStorage.setItem("token", response.data.token);
       const token = response?.data?.token;
@@ -60,36 +60,39 @@ const Login = () => {
       >
         {errMsg}
       </p>
-      <h1>Sign In</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="username">Email:</label>
-        <input
-          type="Email"
-          id="username"
-          ref={userRef}
-          onChange={e => setEmail(e.target.value)}
-          value={email}
-          required
-        />
+      <div className="login-form">
+        <h1 className="login-title">Login</h1>
+        <form onSubmit={handleSubmit} className="form-container">
+          <input
+            className="login-input"
+            type="Email"
+            id="username"
+            ref={userRef}
+            onChange={e => setEmail(e.target.value)}
+            value={email}
+            required
+            placeholder="Email"
+          />
 
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          onChange={e => setPwd(e.target.value)}
-          value={pwd}
-          required
-        />
-        <button>Sign In</button>
-      </form>
-      <p>
-        Need an Account?
-        <br />
-        <span className="line">
-          {/*put router link here*/}
-          <Link to="/signup">Sign Up</Link>
-        </span>
-      </p>
+          <input
+            className="login-input"
+            type="password"
+            id="password"
+            onChange={e => setPwd(e.target.value)}
+            value={pwd}
+            placeholder="Password"
+            required
+          />
+          <button className="login-btn">Login</button>
+        </form>
+        <p className="need-account">
+          Need an Account?
+          <br />
+          <span className="line">
+            <Link to="/signup">Sign Up</Link>
+          </span>
+        </p>
+      </div>
     </section>
   );
 };

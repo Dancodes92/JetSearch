@@ -32,7 +32,7 @@ nav {
   left: 0;
   width: 100%;
   height: 60px;
-  z-index: 9999;
+  z-index: 2;
   display: flex;
   justify-content: space-between;
   background: #2f2f2f;
@@ -47,6 +47,18 @@ nav {
   padding: 0 20px;
 }
 
+.nav_link {
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.nav_link:hover {
+  color: #3975a2;
+}
 
 .logo {
   width: 110px;
@@ -82,6 +94,7 @@ form {
   justify-content: space-evenly;
   flex-grow: 1;
   padding-bottom: 1rem;
+  z-index: 4;
 }
 
 a,
@@ -97,7 +110,7 @@ input[type="date"],
 textarea {
   font-size: 22px;
   padding: 1px;
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
   background-color: aliceblue;
 }
 
@@ -120,14 +133,14 @@ button {
   position: relative;
   font-weight: 1000;
   font-size: 17px;
-  -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
-  box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
   transition: all 250ms;
   overflow: hidden;
   cursor: pointer;
- }
+}
 
- button::before {
+button::before {
   content: "";
   position: absolute;
   top: 0;
@@ -137,18 +150,86 @@ button {
   border-radius: 15px;
   background-color: #3975a2;
   z-index: -1;
-  -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
-  box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
   transition: all 250ms;
- }
+}
 
- button:hover {
+button:hover {
   color: #e8e8e8;
- }
+}
 
- button:hover::before {
+button:hover::before {
   width: 100%;
- }
+}
+
+.btn-wrapper {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 100%;
+  padding: 0 20px;
+  align-items: center;
+}
+
+.bt-wrapper2 {
+  display: flex;
+
+  padding: 0 20px;
+
+  margin-top: 1rem;
+}
+
+.back {
+  width: 100px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #212121;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 250ms;
+  overflow: hidden;
+}
+
+.forward {
+  width: 100px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #212121;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 250ms;
+  overflow: hidden;
+}
+
+
+
+.back::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  border-radius: 15px;
+  background-color: rgb(163, 69, 69);
+  z-index: -1;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  transition: all 250ms;
+}
 
 .instructions {
   font-size: 0.75rem;
@@ -264,6 +345,7 @@ label {
 
 .italic {
   font-style: italic;
+  color: rgb(23, 174, 10);
 }
 
 .lds-roller {
@@ -283,7 +365,7 @@ label {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #fff;
+  background: #3975a2;
   margin: -4px 0 0 -4px;
 }
 .lds-roller div:nth-child(1) {
@@ -400,8 +482,6 @@ label {
   margin-bottom: 2px;
 }
 
-/* create the text-inputs as a container that wraps the elements center screen with row */
-
 .text-inputs {
   display: flex;
   flex-direction: row;
@@ -462,4 +542,88 @@ h5 {
   height: 100%;
   background-color: #2f2f2f;
   margin-top: 30px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #2f2f2f;
+}
+
+.login-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+  flex: 1;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  z-index: 9999;
+}
+
+.login-title2 {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  flex: 1;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  z-index: 9999;
+}
+
+.login-input {
+  margin: 10px;
+  width: 200px;
+  height: 30px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #2f2f2f;
+  margin-top: 30px;
+}
+
+.need-account {
+  font-size: 0.7rem;
+}
+
+.login-btn {
+  margin-top: 2rem;
+  padding: 0.5rem;
+}
+
+#confirm_pwd {
+  margin-top: 0.5rem;
+}
+
+.logout-btn {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  font-size: .6rem;
+  border-radius: .2rem;
+}
+
+.logout-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  border-radius: .2rem;
+  background-color: #a23939;
+  z-index: -1;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0, 0, 0, 0.27);
+  transition: all 250ms;
 }

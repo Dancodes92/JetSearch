@@ -14,7 +14,7 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
   const userRef = useRef();
   const errRef = useRef();
   const [errMsg, setErrMsg] = useState("");
-  const [userFocus, setUserFocus] = useState(false);
+  const [userFocus, setUserFocus ] = useState(false);
   const [pwdFocus, setPwdFocus] = useState(false);
   const [matchPwd, setMatchPwd] = useState(false);
   const [validMatch, setValidMatch] = useState(false);
@@ -33,6 +33,8 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
     setErrMsg("");
   }, [email, pwd, matchPwd]);
 
+  const canClickNext = [email, pwd, matchPwd].every(Boolean);
+
   return (
     <section>
       <p
@@ -42,9 +44,9 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
       >
         {errMsg}
       </p>
-      <h1>Sign Up</h1>
-      <form>
-        <label htmlFor="email">Email: </label>
+      <div className="login-form">
+      <h1 className="login-title">Sign Up</h1>
+      <form className="form-container">
         <input
           type="email"
           id="email"
@@ -55,9 +57,9 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
           aria-describedby="uidnote"
           onFocus={() => setUserFocus(true)}
           onBlur={() => setUserFocus(false)}
+          placeholder="Email"
         />
         <br />
-        <label htmlFor="password">Password: </label>
         <input
           type="password"
           id="password"
@@ -65,16 +67,8 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
           onChange={e => setPwd(e.target.value)}
           onFocus={() => setPwdFocus(true)}
           onBlur={() => setPwdFocus(false)}
+          placeholder="Password"
         />
-        <label htmlFor="confirm_pwd">
-          Confirm Password:
-          <span className={validMatch && matchPwd ? "valid" : "hide"}>
-            <FontAwesomeIcon icon={faCheck} />
-          </span>
-          <span className={validMatch || !matchPwd ? "hide" : "invalid"}>
-            <FontAwesomeIcon icon={faTimes} />
-          </span>
-        </label>
         <input
           type="password"
           id="confirm_pwd"
@@ -83,7 +77,15 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
           aria-describedby="confirmnote"
           onFocus={() => setMatchFocus(true)}
           onBlur={() => setMatchFocus(false)}
+          placeholder="Confirm Password"
         />
+        <br />
+          <span className={validMatch && matchPwd ? "valid" : "hide"}>
+            <FontAwesomeIcon icon={faCheck} />
+          </span>
+          <span className={validMatch || !matchPwd ? "hide" : "invalid"}>
+            <FontAwesomeIcon icon={faTimes} />
+          </span>
         <p
           id="confirmnote"
           className={matchFocus && !validMatch ? "instructions" : "offscreen"}
@@ -91,22 +93,27 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
           <FontAwesomeIcon icon={faInfoCircle} />
           Password does not match!
         </p>
+        {canClickNext ? (
         <button
-          disabled={!email || !pwd || !validMatch ? true : false}
           onClick={() => {
             onNextStep();
           }}
+          className="login-btn"
         >
           Next
         </button>
+        ) : (
+          null
+        )}
       </form>
-      <p>
+      <p className="need-account">
         Already a Member?
         <br />
         <span className="line">
           <Link to="/login">Login</Link>
         </span>
       </p>
+      </div>
     </section>
   );
 }
