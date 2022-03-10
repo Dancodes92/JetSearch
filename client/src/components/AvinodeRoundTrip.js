@@ -88,6 +88,7 @@ function AvinodeRoundTrip() {
     return (
       <section>
         <h2>{errMsg}</h2>
+        <Link to="/">Search Again</Link>
       </section>
     );
   }

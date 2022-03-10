@@ -100,7 +100,7 @@ function Search() {
                     id="from"
                     name="from"
                     placeholder="from"
-                    onChange={e => setFrom(e.target.value)}
+                    onChange={e => setFrom(e.target.value.toUpperCase())}
                     value={from.toLocaleUpperCase()}
                   />
                 </div>
@@ -114,7 +114,7 @@ function Search() {
                     id="to"
                     name="to"
                     placeholder="to"
-                    onChange={e => setTo(e.target.value)}
+                    onChange={e => setTo(e.target.value.toUpperCase())}
                     value={to.toLocaleUpperCase()}
                   />
                 </div>

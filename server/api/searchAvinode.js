@@ -24,6 +24,7 @@ const avinodeSearcher = async (
 
   const page = await browser.newPage();
   // await page.setViewport({ width: 1306, height: 844 });
+
   await page.goto("https://marketplace.avinode.com/sso/mvc/login");
   await page.type("#username", avinodeEmail); //use environment variable for this
   await page.type("#password", avinodePassword); //use environment variable for this
@@ -188,35 +189,24 @@ const avinodeSearcher = async (
         "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
       );
 
-
-
       // click the text box
       await page.waitForSelector("#buyerMessage");
       await page.click("#buyerMessage");
 
       await page.waitForTimeout(2000);
 
+      const button = await page.$x(
+        "/html/body/div[5]/div/div/div/div/form/div[5]/div/button"
+      );
+      await button[0].click();
 
+      await page.waitForTimeout(3000);
+      // close the modal
 
-      // evaluate the page to find the send request button with the class "t-form-submit"
-
-      // await page.waitForSelector("#aviLightBoxContainer-4 > div > div > div > div > form");
-      // await page.click(
-      //   "#aviLightBoxContainer-4 > div > div > div > div > form"
-      // );
-
-      // await page.waitForTimeout(2000);
-
-      await page.evaluate(() => {
-        let button = document.querySelector(".t-form-submit");
-
-        button.click();
-      });
-
-      await page.waitForTimeout(2000);
-
-      // await page.waitForSelector("#avi-icon-close");
-      // await page.click("#avi-icon-close");
+      // click this document.querySelector("#avi-icon-close")
+      if(await page.$(".avi-window-modal")) {
+        await page.click(".avi-window-modal > div > div > div > span > svg");
+      }
 
       await page.waitForSelector(jetCategories[userSelections[i]]);
       await page.click(jetCategories[userSelections[i]]);
@@ -230,7 +220,6 @@ const avinodeSearcher = async (
   // await browser.close();
   return selections;
 };
-
 
 
 router.post("/", async (req, res) => {
@@ -267,6 +256,7 @@ router.post("/", async (req, res) => {
     );
     res.status(200).send(selections);
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       message: err.message,
     });

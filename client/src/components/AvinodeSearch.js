@@ -31,7 +31,7 @@ const canClick = [from, to, date, time, pax].every(
       setLoading(true);
       setErrMsg("");
       const response = await axios.post(
-        "https://jetsearcher.herokuapp.com/api/searchAvinode",
+        "/https://jetsearcher.herokuapp.com/api/searchAvinode",
         {
           from,
           to,
@@ -82,6 +82,7 @@ const canClick = [from, to, date, time, pax].every(
     return (
       <section>
         <h2>{errMsg}</h2>
+        <Link to="/">Search Again</Link>
       </section>
     );
   }
@@ -100,22 +101,22 @@ const canClick = [from, to, date, time, pax].every(
               <label htmlFor="from">From</label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control2"
                 id="from"
                 placeholder="From"
-                value={from.toLocaleUpperCase()}
-                onChange={e => setFrom(e.target.value)}
+                value={from.toUpperCase()}
+                onChange={e => setFrom(e.target.value.toUpperCase())}
               />
             </div>
             <div className="form-group">
               <label htmlFor="to">To</label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control2"
                 id="to"
                 placeholder="To"
                 value={to.toLocaleUpperCase()}
-                onChange={e => setTo(e.target.value)}
+                onChange={e => setTo(e.target.value.toUpperCase())}
               />
             </div>
               </div>
@@ -124,7 +125,7 @@ const canClick = [from, to, date, time, pax].every(
               <label htmlFor="date">Date</label>
               <input
                 type="date"
-                className="form-control"
+                className="form-control3"
                 id="date"
                 placeholder="Date"
                 onChange={handleDate}
@@ -134,7 +135,7 @@ const canClick = [from, to, date, time, pax].every(
               <label htmlFor="time">Time</label>
               <input
                 type="time"
-                className="form-control"
+                className="form-control4"
                 id="Time"
                 placeholder="Time"
                 value={time}
