@@ -60,10 +60,10 @@ const avinodeSearcher = async (
       "body > div.avi-drop-down-container > div > div:nth-child(1) > div"
     );
     await page.waitForSelector(
-      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(7) > div > button"
+      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div:nth-child(3) > div:nth-child(2) > div > button"
     );
     await page.click(
-      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div > div:nth-child(7) > div > button"
+      "body > div.avi-page > div > div.avi-page-section.avi-is-fullscreen > div > form > div.avi-box.avi-is-none-down.avi-is-child-spacing-none.avi-is-aligned-left.avi-is-text-aligned-left > div:nth-child(3) > div:nth-child(2) > div > button"
     );
   } else {
     await page.type("#segments\\[0\\]\\.startAirportSearchValue", from);
@@ -180,7 +180,6 @@ const avinodeSearcher = async (
       });
       selections.push(x);
 
-
       /// clicks the button to open modal
       await page.waitForSelector(
         "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
@@ -200,11 +199,11 @@ const avinodeSearcher = async (
       );
       await button[0].click();
 
-      await page.waitForTimeout(3000);
+      await page.waitForTimeout(4000);
       // close the modal
 
       // click this document.querySelector("#avi-icon-close")
-      if(await page.$(".avi-window-modal")) {
+      if (await page.$(".avi-window-modal")) {
         await page.click(".avi-window-modal > div > div > div > span > svg");
       }
 
@@ -217,10 +216,9 @@ const avinodeSearcher = async (
   };
 
   await startSelecting();
-  // await browser.close();
+  await browser.close();
   return selections;
 };
-
 
 router.post("/", async (req, res) => {
   try {
