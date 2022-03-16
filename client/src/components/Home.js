@@ -14,9 +14,9 @@ function Home() {
         <button className="home-button">Search FlightListPro.com</button>
       </Link>
       <br />
-      <Link to="/avinodeSearch">
+      {/* <Link to="/avinodeSearch">
         <button className="home-button">Search Avinode.com</button>
-      </Link>
+      </Link> */}
     </div>
   )
 }

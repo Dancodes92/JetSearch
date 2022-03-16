@@ -41,7 +41,7 @@ router.post("/", async (req, res, next) => {
   } catch (err) {
     res.status(500).json({
       error: err.message,
-    })
+    });
   }
 });
 
@@ -273,30 +273,27 @@ const flightListPro = async (
 
   if (date2) {
     const textBox = await page.$("#comments");
-    await textBox.type(`Hello,
-  Please quote the following round trip-
+    await textBox.type(`Hi Team,
+Please quote the following round trip-
 
-    From: ${airport}
-    To: ${to}
-    Date: ${date}
-    Time: ${time}
-    return Date: ${date2}
-    return Time: ${time2}
-    Passengers: ${passengers}
+${date} (${time})
+${airport} to ${to}
+${date2} (${time2})
 
-  Thank you.`);
+${passengers} Pax
+
+  Thanks.`);
   } else {
     const textBox = await page.$("#comments");
-    await textBox.type(`Hello,
-  Please quote the following-
+    await textBox.type(`Hi Team,
+Please quote the following-
 
-    From: ${airport}
-    To: ${to}
-    Date: ${date}
-    Time: ${time}
-    Passengers: ${passengers}
+${date} (${time})
+${airport} to ${to}
 
-  Thank you.`);
+${passengers} Pax
+
+  Thanks.`);
   }
 
   await page.waitForSelector(
