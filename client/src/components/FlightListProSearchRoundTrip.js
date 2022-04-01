@@ -16,6 +16,7 @@ function SearchRoundTrip() {
   const [time2, setTime2] = useState("");
   const [passengers, setPassengers] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [radius, setRadius] = useState(null);
 
   const navigate = useNavigate();
 
@@ -27,7 +28,7 @@ function SearchRoundTrip() {
       setIsError(false);
       const airport = from.toUpperCase();
       const res = await axios.post(
-        "https://jetsearcher.herokuapp.com/api/search",
+        "api/search",
         {
           airport,
           to,
@@ -37,30 +38,31 @@ function SearchRoundTrip() {
           categories,
           date2,
           time2,
+          radius,
         },
         {
           headers: { authorization: localStorage.getItem("token") },
         }
       );
-      if(res.status === 200) {
-
-      setFrom("");
-      setTo("");
-      setDate("");
-      setPassengers(null);
-      setTime("");
-      setCategories([]);
-      setFlights(res.data);
-      setDate2("");
-      setTime2("");
-      console.log("data", res.data);
-      setIsLoading(false);
-      //navigate to the results page and pass the data as props
-      navigate("/results", { state: { flights: res.data, airport: airport } });
+      if (res.status === 200) {
+        setFrom("");
+        setTo("");
+        setDate("");
+        setPassengers(null);
+        setTime("");
+        setCategories([]);
+        setFlights(res.data);
+        setDate2("");
+        setTime2("");
+        console.log("data", res.data);
+        setIsLoading(false);
+        //navigate to the results page and pass the data as props
+        navigate("/results", {
+          state: { flights: res.data, airport: airport },
+        });
       } else {
         setIsError(true);
       }
-
     } catch (err) {
       setIsError(true);
       setIsLoading(false);
@@ -79,7 +81,6 @@ function SearchRoundTrip() {
   if (isLoading) {
     return <Spinner />;
   }
-
 
   return (
     <section className="search">
@@ -110,85 +111,110 @@ function SearchRoundTrip() {
                 <div className="airport">
                   <label htmlFor="Airport" className="input_label">
                     To (ICAO)
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="to"
-                    name="to"
-                    placeholder="to"
-                    onChange={e => setTo(e.target.value)}
-                    value={to.toLocaleUpperCase()}
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="to"
+                      name="to"
+                      placeholder="to"
+                      onChange={e => setTo(e.target.value)}
+                      value={to.toLocaleUpperCase()}
                     />
-                    </label>
+                  </label>
                 </div>
               </div>
               <div className="text-inputs">
                 <div className="form-group">
                   <label htmlFor="date" className="input_label">
                     Date
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="date"
-                    name="date"
-                    placeholder="Date"
-                    onChange={e => setDate(e.target.value)}
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="date"
+                      name="date"
+                      placeholder="Date"
+                      onChange={e => setDate(e.target.value)}
                     />
-                    </label>
+                  </label>
                 </div>
                 <div className="form-group">
                   <label htmlFor="Time" className="input_label">
                     Time
-                  <input
-                    type="time"
-                    className="form-control"
-                    id="Time"
-                    name="Time"
-                    placeholder="Time"
-                    onChange={e => setTime(e.target.value)}
+                    <input
+                      type="time"
+                      className="form-control"
+                      id="Time"
+                      name="Time"
+                      placeholder="Time"
+                      onChange={e => setTime(e.target.value)}
                     />
-                    </label>
+                  </label>
                 </div>
               </div>
               <div className="text-inputs">
                 <div className="form-group">
                   <label htmlFor="date" className="input_label">
                     Date
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="date2"
-                    name="date2"
-                    placeholder="Date"
-                    onChange={e => setDate2(e.target.value)}
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="date2"
+                      name="date2"
+                      placeholder="Date"
+                      onChange={e => setDate2(e.target.value)}
                     />
-                    </label>
+                  </label>
                 </div>
                 <div className="form-group">
                   <label htmlFor="Time2" className="input_label">
                     Time
-                  <input
-                    type="time"
-                    className="form-control"
-                    id="Time"
-                    name="Time2"
-                    placeholder="Time"
-                    onChange={e => setTime2(e.target.value)}
+                    <input
+                      type="time"
+                      className="form-control"
+                      id="Time"
+                      name="Time2"
+                      placeholder="Time"
+                      onChange={e => setTime2(e.target.value)}
                     />
-                    </label>
+                  </label>
                 </div>
                 <div className="form-group">
                   <label htmlFor="passengers" className="input_label">
                     Pax
-                  <input
-                    type="number"
-                    className="form-control-pax"
-                    id="passengers"
-                    name="passengers"
-                    placeholder="Pax"
-                    onChange={e => setPassengers(e.target.value)}
+                    <input
+                      type="number"
+                      className="form-control-pax"
+                      id="passengers"
+                      name="passengers"
+                      placeholder="Pax"
+                      onChange={e => setPassengers(e.target.value)}
                     />
-                    </label>
+                  </label>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="radius" className="input_label">
+                    Radius
+                  </label>
+                  <select
+                    className="form-control"
+                    id="radius"
+                    name="radius"
+                    onChange={e => setRadius(e.target.value)}>
+                    <option value="">Select Radius</option>
+                    <option value="0">0</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="150">150</option>
+                    <option value="200">200</option>
+                    <option value="250">250</option>
+                    <option value="300">300</option>
+                    <option value="350">350</option>
+                    <option value="400">400</option>
+                    <option value="450">450</option>
+                    <option value="500">500</option>
+                    <option value="1000">1000</option>
+                    <option value="2000">2000</option>
+                  </select>
                 </div>
               </div>
             </div>

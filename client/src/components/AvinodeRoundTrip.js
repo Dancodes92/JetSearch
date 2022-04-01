@@ -28,7 +28,7 @@ function AvinodeRoundTrip() {
       setLoading(true);
       setErrMsg("");
       const response = await axios.post(
-        "https://jetsearcher.herokuapp.com/api/searchAvinode",
+        "api/searchAvinode",
         {
           from,
           to,

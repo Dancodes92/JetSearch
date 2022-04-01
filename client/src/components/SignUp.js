@@ -25,7 +25,7 @@ function SignUp() {
   const registerUser = async () => {
     try {
       const res = await axios.post(
-        "https://jetsearcher.herokuapp.com/auth/signup",
+        "auth/signup",
         { email, password: pwd, flightListProEmail: flpemail, flightListProPassword: flppwd, avinodeEmail, avinodePassword: avinodePwd },
       );
       window.localStorage.setItem("token", res.data.token);

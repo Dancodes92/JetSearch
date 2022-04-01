@@ -22,7 +22,7 @@ function AvinodeCredentials({
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("https://jetsearcher.herokuapp.com/api/avinode", {
+      const response = await axios.post("api/avinode", {
         email,
         password: pwd,
       });
@@ -31,6 +31,7 @@ function AvinodeCredentials({
         setAvinodeEmail(email);
         setAvinodePwd(pwd);
         setIsValidCredentials(true);
+        onNextStep();
       } else {
         setErrMsg("Invalid Credentials");
       }
@@ -44,12 +45,6 @@ function AvinodeCredentials({
     setLoading(false);
   };
 
-  const sendToNextStep = () => {
-    setTimeout(() => {
-      onNextStep();
-    }, 2000);
-  };
-
   if (errMsg) {
     setTimeout(() => {
       setErrMsg("");
@@ -58,17 +53,6 @@ function AvinodeCredentials({
     return (
       <section>
         <p className="errmsg">{errMsg}</p>
-      </section>
-    );
-  }
-
-  if (isValidCredentials) {
-    return (
-      <section>
-        <h2>
-          Credentials are valid.
-          {sendToNextStep()}
-        </h2>
       </section>
     );
   }
@@ -87,8 +71,8 @@ function AvinodeCredentials({
         </h1>
         <form onSubmit={handleSubmit} className="form-container" >
           <input
-            type="email"
-            id="email"
+            type="text"
+            id="text"
             autoComplete="off"
             onChange={e => setEmail(e.target.value)}
             required

@@ -9,8 +9,17 @@ router.post("/", async (req, res, next) => {
   try {
     const token = req.headers.authorization;
     const user = await User.findByToken(token);
-    const { airport, to, date, passengers, time, categories, date2, time2 } =
-      req.body;
+    const {
+      airport,
+      to,
+      date,
+      passengers,
+      time,
+      categories,
+      date2,
+      time2,
+      radius,
+    } = req.body;
     if (!user) {
       return res.status(401).send({ error: "Not Authorized" });
     }
@@ -23,7 +32,8 @@ router.post("/", async (req, res, next) => {
       time,
       categories,
       date2,
-      time2
+      time2,
+      radius
     );
     const startSearch = await flightListPro(
       user.flightListProEmail,
@@ -35,10 +45,12 @@ router.post("/", async (req, res, next) => {
       time,
       categories,
       date2,
-      time2
+      time2,
+      radius
     );
     res.send(startSearch);
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       error: err.message,
     });
@@ -55,11 +67,12 @@ const flightListPro = async (
   time,
   categories,
   date2,
-  time2
+  time2,
+  radius
 ) => {
   // headless mode
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -79,7 +92,7 @@ const flightListPro = async (
 
   await page.waitForSelector("tbody > tr > .bold > #radiusDiv > select");
   await page.click("tbody > tr > .bold > #radiusDiv > select");
-  await page.select("tbody > tr > .bold > #radiusDiv > select", "1000"); // selects 1000 mile radius from airport
+  await page.select("tbody > tr > .bold > #radiusDiv > select", `${radius}`); // selects 1000 mile radius from airport
 
   await page.waitForSelector("#pax");
   await page.click("#pax");
@@ -117,141 +130,73 @@ const flightListPro = async (
   ///////////////////////////////////
   await page.waitForNavigation();
   ///////////////////////////////////
-  let allSelects = [];
-  // theres a way to do this with recursion
-  const flightPicker = await page.evaluate(() => {
-    let arr = [];
-    let opAndJet = [];
-    const companyName = document.querySelectorAll(
-      "#frmSelect > table > tbody > tr > td:nth-child(2) > a"
-    );
-    const jetType = document.querySelectorAll(
-      "#frmSelect > table > tbody > tr > td:nth-child(3) > a"
-    );
-    const button = document.querySelectorAll(
-      "#frmSelect > table > tbody > tr > td.phone-column > input[type=checkbox]"
-    );
+  // find the next page button which will be the second to last a tag
+  var allSelects = [];
+  // recursively re-write the flightPick function if there is a next page button then keep clicking
+  const flightPick = async () => {
+    let allFlights = [];
+    const flightPicker = await page.evaluate(() => {
+      let arr = [];
+      let opAndJet = [];
+      const companyName = document.querySelectorAll(
+        "#frmSelect > table > tbody > tr > td:nth-child(2) > a"
+      );
+      const jetType = document.querySelectorAll(
+        "#frmSelect > table > tbody > tr > td:nth-child(3) > a"
+      );
+      const button = document.querySelectorAll(
+        "#frmSelect > table > tbody > tr > td.phone-column > input[type=checkbox]"
+      );
+      const tailNumber = document.querySelectorAll(
+        " #frmSelect > table > tbody > tr > td:nth-child(5)"
+      );
 
-    for (let i = 0; i < companyName.length - 1; i++) {
-      let curCompanyName = companyName[i];
-      let curJet = jetType[i];
-      let compAndType = `${curCompanyName.innerText} ${curJet.innerText}`;
-      if (!opAndJet.includes(compAndType)) {
-        button[i].click();
-        opAndJet.push(`${curCompanyName.innerText} ${curJet.innerText}`);
-        arr.push({
-          company: curCompanyName.innerText,
-          jet: curJet.innerText,
-        });
+      console.log("tailNumber char at 6", tailNumber[0].innerText.charAt(1));
+
+      for (let i = 0; i < companyName.length - 1; i++) {
+        let curCompanyName = companyName[i];
+        let curJet = jetType[i];
+        let compAndType = `${curCompanyName.innerText} ${curJet.innerText}`;
+        if (
+          !opAndJet.includes(compAndType) &&
+          tailNumber[i].innerText.charAt(1) === "N"
+        ) {
+          button[i].click();
+          opAndJet.push(`${curCompanyName.innerText} ${curJet.innerText}`);
+          arr.push({
+            company: curCompanyName.innerText,
+            jet: curJet.innerText,
+          });
+        }
       }
+      return arr;
+    });
+    allFlights.push(...flightPicker);
+    // if there is a next page button then click it
+    const nextPage = await page.evaluate(() => {
+      const nextPage = document.querySelectorAll(
+        "#frmSelect > table > tbody > tr:nth-child(3) > td > a"
+      );
+      const theNextPage = nextPage[nextPage.length - 2];
+      // find the inner text of the next page button
+      const nextPageText = theNextPage?.innerText;
+      if (nextPageText === "Next") {
+        theNextPage.click();
+        return true;
+      } else {
+        return false;
+      }
+    });
+    console.log("nextPage", nextPage);
+    if (nextPage) {
+      await page.waitForNavigation();
+      await flightPick();
+      await page.waitForTimeout(1000);
     }
-    return arr;
-  });
+    return allFlights;
+  };
 
-  allSelects.push(flightPicker);
-
-  // got the the next page of flights and re run the function
-  // if the selector is not there, then we are on the last page
-  while (
-    await page.$(
-      "#frmSelect > table > tbody > tr:nth-child(55) > td > span:nth-child(2) > a"
-    )
-  ) {
-    await page.waitForSelector(
-      "#frmSelect > table > tbody > tr:nth-child(55) > td > span:nth-child(2) > a"
-    );
-    await page.click(
-      "#frmSelect > table > tbody > tr:nth-child(55) > td > span:nth-child(2) > a"
-    );
-    ///////
-    await page.waitForTimeout(500);
-
-    const flightPicker2 = await page.evaluate(() => {
-      let arr = [];
-      let opAndJet = [];
-      const companyName = document.querySelectorAll(
-        "#frmSelect > table > tbody > tr > td:nth-child(2) > a"
-      );
-      const jetType = document.querySelectorAll(
-        "#frmSelect > table > tbody > tr > td:nth-child(3) > a"
-      );
-      const button = document.querySelectorAll(
-        "#frmSelect > table > tbody > tr > td.phone-column > input[type=checkbox]"
-      );
-
-      for (let i = 0; i < companyName.length - 1; i++) {
-        let curCompanyName = companyName[i];
-        let curJet = jetType[i];
-        let nextCompanyName = companyName[i + 1];
-        let nextJet = jetType[i + 1];
-        let compAndType = `${curCompanyName.innerText} ${curJet.innerText}`;
-        if (!opAndJet.includes(compAndType)) {
-          opAndJet.push(`${curCompanyName.innerText} ${curJet.innerText}`);
-          button[i].click();
-          arr.push({
-            company: curCompanyName.innerText,
-            jet: curJet.innerText,
-          });
-        }
-      }
-      return arr;
-    });
-
-    allSelects.push(flightPicker2);
-    /////
-  }
-
-  while (
-    await page.$(
-      "#frmSelect > table > tbody > tr:nth-child(55) > td > span:nth-child(5) > a"
-    )
-  ) {
-    // go to the next page of flights
-    await page.waitForSelector(
-      "#frmSelect > table > tbody > tr:nth-child(55) > td > span:nth-child(5) > a"
-    );
-    await page.click(
-      "#frmSelect > table > tbody > tr:nth-child(55) > td > span:nth-child(5) > a"
-    );
-
-    //////
-    await page.waitForTimeout(500);
-
-    const flightPicker3 = await page.evaluate(() => {
-      let arr = [];
-      let opAndJet = [];
-      const companyName = document.querySelectorAll(
-        "#frmSelect > table > tbody > tr > td:nth-child(2) > a"
-      );
-      const jetType = document.querySelectorAll(
-        "#frmSelect > table > tbody > tr > td:nth-child(3) > a"
-      );
-      const button = document.querySelectorAll(
-        "#frmSelect > table > tbody > tr > td.phone-column > input[type=checkbox]"
-      );
-
-      for (let i = 0; i < companyName.length - 1; i++) {
-        let curCompanyName = companyName[i];
-        let curJet = jetType[i];
-        let nextCompanyName = companyName[i + 1];
-        let nextJet = jetType[i + 1];
-        let compAndType = `${curCompanyName.innerText} ${curJet.innerText}`;
-
-        if (!opAndJet.includes(compAndType)) {
-          opAndJet.push(`${curCompanyName.innerText} ${curJet.innerText}`);
-          button[i].click();
-          arr.push({
-            company: curCompanyName.innerText,
-            jet: curJet.innerText,
-          });
-        }
-      }
-      return arr;
-    });
-
-    allSelects.push(flightPicker3);
-    break;
-  }
+  await flightPick();
 
   page.waitForTimeout(500);
 
@@ -296,13 +241,13 @@ ${passengers} Pax
   Thanks.`);
   }
 
-  await page.waitForSelector(
-    "#frmSendFeedback > table:nth-child(12) > tbody > tr:nth-child(18) > td > input:nth-child(1)"
-  );
-  await page.click(
-    "#frmSendFeedback > table:nth-child(12) > tbody > tr:nth-child(18) > td > input:nth-child(1)"
-  );
+  // await page.waitForSelector(
+  //   "#frmSendFeedback > table:nth-child(12) > tbody > tr:nth-child(18) > td > input:nth-child(1)"
+  // );
+  // await page.click(
+  //   "#frmSendFeedback > table:nth-child(12) > tbody > tr:nth-child(18) > td > input:nth-child(1)"
+  // );
 
-  await browser.close();
-  return allSelects;
+  // await browser.close();
+  return;
 };

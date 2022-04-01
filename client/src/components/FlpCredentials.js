@@ -18,7 +18,7 @@ function FlpCredentials({
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("https://jetsearcher.herokuapp.com/api/flp", {
+      const response = await axios.post("api/flp", {
         email,
         password: pwd,
       });
@@ -44,7 +44,7 @@ function FlpCredentials({
     //wait for 3 seconds then call onSubmit
     setTimeout(() => {
       onSubmit();
-    }, 2000);
+    }, 3000);
   };
 
   if (errMsg) {
@@ -62,7 +62,7 @@ function FlpCredentials({
   if (isValidCredentials) {
     return (
       <section>
-        <h2>Valid Credentials</h2>
+        <h2>Account Created</h2>
         {sendToNextStep()}
       </section>
     );

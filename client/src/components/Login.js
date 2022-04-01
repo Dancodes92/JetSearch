@@ -28,7 +28,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "https://jetsearcher.herokuapp.com/auth/login",
+        "auth/login",
         { email, password: pwd }
       );
       window.localStorage.setItem("token", response.data.token);
