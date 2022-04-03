@@ -1,24 +1,41 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-
+import React from "react";
+import { Link } from "react-router-dom";
+import { Container, Paper, Typography, Stack, Button } from "@mui/material";
 
 function Home() {
   // show button to got to "/flpSearch"
-  return (
-    <div className="home">
-      <h1 className="home-title">Search Flights</h1>
-      <p className="home-text">
-        Search Avinode and FlightListPro for flights.
-      </p>
-      <Link to="/flpSearch">
-        <button className="home-button">Search FlightListPro.com</button>
-      </Link>
-      <br />
-      {/* <Link to="/avinodeSearch">
-        <button className="home-button">Search Avinode.com</button>
-      </Link> */}
-    </div>
-  )
-}
 
-export default Home
+  // return Links to other pages
+  return (
+    <Container maxWidth="md">
+      <Paper>
+        <Stack spacing={3}>
+          <Typography variant="h4">Welcome to Avinode</Typography>
+          <Typography variant="body1">
+            Avinode is a web application that helps you find the best flights
+            to your destination.
+          </Typography>
+          </Stack>
+          <Stack spacing={3}>
+            <Button
+              variant="contained"
+              color="primary"
+              component={Link}
+              to="/flpSearch"
+            >
+              Search Flights
+            </Button>
+            <Button
+              variant="contained"
+             
+              component={Link}
+              to="/avinodeSearch"
+            >
+              Search Avinode
+            </Button>
+          </Stack>
+      </Paper>
+    </Container>
+  );
+}
+export default Home;

@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Spinner from "./Spinner";
 import { Link } from "react-router-dom";
+import Button from '@mui/material/Button';
 
 function Search() {
   const [flights, setFlights] = useState([]);
@@ -404,9 +405,14 @@ function Search() {
               </div>
             </div>
             {from && to && passengers && categories.length > 0 && (
-              <button type="submit" className="btn btn-primary">
+              <Button
+                onClick={() => {
+                  handleSubmit();
+                }}
+              >
                 Search
-              </button>
+              </Button>
+
             )}
           </form>
         </div>

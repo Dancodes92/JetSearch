@@ -15,10 +15,10 @@ const avinodeSearcher = async (
   date2,
   time2,
   pax,
-  categories
+  catagory
 ) => {
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -97,7 +97,7 @@ const avinodeSearcher = async (
   );
 
   // array of all the jet categories
-  const userSelections = categories;
+  const userSelection = catagory;
   ////////////////////////////////////////////////////////////////////////////////
   const jetCategories = await page.$$eval(
     "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-first-level-collapsable-page-section.avi-is-horizontal-flow-half > div > div > div.avi-first-level-collapsable-page-section-content-wrapper > div > div:nth-child(5) > div > div:nth-child(2) > div > div > div",
@@ -116,102 +116,98 @@ const avinodeSearcher = async (
   // loop through userSelections array and click each value in the jetCategories object whose key matches the value in the userSelections array
   let selections = [];
   const startSelecting = async () => {
-    for (let i = 0; i < userSelections.length; i++) {
-      await page.waitForSelector(jetCategories[userSelections[i]]);
-      await page.click(jetCategories[userSelections[i]]);
-      // get only the ".t-company-name" with the parent class of "row avi-list-item avi-list-item-expandable"
-      // scroll to the bottom of the page
-      await page.evaluate(() => {
-        window.scrollTo(0, document.body.scrollHeight);
-      });
+    await page.waitForSelector(jetCategories[userSelection]);
+    await page.click(jetCategories[userSelection]);
+    // get only the ".t-company-name" with the parent class of "row avi-list-item avi-list-item-expandable"
+    // scroll to the bottom of the page
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
 
-      const x = await page.$$eval(".t-company-link", elements => {
-        const getParentElement = element => {
-          // find the parent element which has the class "row avi-list-item avi-list-item-expandable"
-          let parent = element.parentElement;
-          while (
-            parent.className !== "row avi-list-item avi-list-item-expandable"
-          ) {
-            parent = parent.parentElement;
-          }
-          return parent;
-        };
-        const getChildElement = element => {
-          // find the last child element of the parent element
-          let child = element.children[element.children.length - 1];
-          // return the next child element of the last child element
-          return child.children[0];
-        };
+    const x = await page.$$eval(".t-company-link", elements => {
+      const getParentElement = element => {
+        // find the parent element which has the class "row avi-list-item avi-list-item-expandable"
+        let parent = element.parentElement;
+        while (
+          parent.className !== "row avi-list-item avi-list-item-expandable"
+        ) {
+          parent = parent.parentElement;
+        }
+        return parent;
+      };
+      const getChildElement = element => {
+        // find the last child element of the parent element
+        let child = element.children[element.children.length - 1];
+        // return the next child element of the last child element
+        return child.children[0];
+      };
 
-        const getAircraftName = element => {
-          // get the 2nd child element of the parent element
-          let child = element.children[1];
-          // get the <a> element of child
-          return child.children[0].innerText;
-        };
+      const getAircraftName = element => {
+        // get the 2nd child element of the parent element
+        let child = element.children[1];
+        // get the <a> element of child
+        return child.children[0].innerText;
+      };
 
-        let companyNames = [];
-        let flightArr = [];
-        for (let i = 0; i < elements.length; i++) {
-          // if companyNames array.lenght is >= 30, break the loop
-          if (companyNames.length >= 30) {
-            break;
-          }
-          if (
-            elements[i].parentElement.parentElement.parentElement.parentElement
-              .parentElement.className ===
-              "row avi-list-item avi-list-item-expandable" ||
-            elements[i].parentElement.parentElement.parentElement.parentElement
-              .className === "row avi-list-item avi-list-item-expandable"
-          ) {
-            let companyName = elements[i].innerText;
-            let par = getParentElement(elements[i]);
-            let button = getChildElement(par);
-            let aircraftName = getAircraftName(par);
-            let operatorAndJet = companyName + " " + aircraftName;
-            if (!companyNames.includes(operatorAndJet)) {
-              button.click();
-              companyNames.push(operatorAndJet);
-              flightArr.push({ company: companyName, jet: aircraftName });
-            }
+      let companyNames = [];
+      let flightArr = [];
+      for (let i = 0; i < elements.length; i++) {
+        // if companyNames array.lenght is >= 30, break the loop
+        if (companyNames.length >= 30) {
+          break;
+        }
+        if (
+          elements[i].parentElement.parentElement.parentElement.parentElement
+            .parentElement.className ===
+            "row avi-list-item avi-list-item-expandable" ||
+          elements[i].parentElement.parentElement.parentElement.parentElement
+            .className === "row avi-list-item avi-list-item-expandable"
+        ) {
+          let companyName = elements[i].innerText;
+          let par = getParentElement(elements[i]);
+          let button = getChildElement(par);
+          let aircraftName = getAircraftName(par);
+          let operatorAndJet = companyName + " " + aircraftName;
+          if (!companyNames.includes(operatorAndJet)) {
+            button.click();
+            companyNames.push(operatorAndJet);
+            flightArr.push({ company: companyName, jet: aircraftName });
           }
         }
-        return flightArr;
-      });
-      selections.push(x);
-
-      /// clicks the button to open modal
-      await page.waitForSelector(
-        "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
-      );
-      await page.click(
-        "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
-      );
-
-      // click the text box
-      await page.waitForSelector("#buyerMessage");
-      await page.click("#buyerMessage");
-
-      await page.waitForTimeout(2000);
-
-      const button = await page.$x(
-        "/html/body/div[5]/div/div/div/div/form/div[5]/div/button"
-      );
-      await button[0].click();
-
-      await page.waitForTimeout(4000);
-      // close the modal
-
-      // click this document.querySelector("#avi-icon-close")
-      if (await page.$(".avi-window-modal")) {
-        await page.click(".avi-window-modal > div > div > div > span > svg");
       }
+      return flightArr;
+    });
+    selections.push(x);
 
-      await page.waitForSelector(jetCategories[userSelections[i]]);
-      await page.click(jetCategories[userSelections[i]]);
+    /// clicks the button to open modal
+    await page.waitForSelector(
+      "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
+    );
+    await page.click(
+      "body > div.avi-page > div > div.avi-flex-grid.avi-vertical-flow-none > div.avi-flex-grid-column > div > div.avi-page-header > div > div > button"
+    );
 
-      await page.waitForTimeout(1000);
-    }
+    // click the text box
+    await page.waitForSelector("#buyerMessage");
+    await page.click("#buyerMessage");
+
+    await page.waitForTimeout(2000);
+
+    const button = await page.$x(
+      "/html/body/div[5]/div/div/div/div/form/div[5]/div/button"
+    );
+    await button[0].click();
+
+    await page.waitForTimeout(4000);
+    // close the modal
+
+    // click this document.querySelector("#avi-icon-close")
+    // if (await page.$(".avi-window-modal")) {
+    //   await page.click(".avi-window-modal > div > div > div > span > svg");
+    // }
+
+    // await page.waitForTimeout(1000);
+
     return;
   };
 
@@ -240,23 +236,48 @@ router.post("/", async (req, res) => {
       pax,
       categories
     );
-    const selections = await avinodeSearcher(
-      user.avinodeEmail,
-      user.avinodePassword,
-      from,
-      to,
-      date,
-      time,
-      date2,
-      time2,
-      pax,
-      categories
-    );
-    res.status(200).send(selections);
+    // send through one category at a time
+    let selections = [];
+    for (let i = 0; i < categories.length; i++) {
+      let x = await avinodeSearcher(
+        user.avinodeEmail,
+        user.avinodePassword,
+        from,
+        to,
+        date,
+        time,
+        date2,
+        time2,
+        pax,
+        categories[i]
+      );
+      selections = selections.concat(x);
+    }
+    res.send(selections);
   } catch (err) {
     console.log(err);
-    res.status(500).json({
-      message: err.message,
-    });
+    res.status(500).send({ error: "Server error" });
   }
 });
+
+// request comes in with all categories in an array. we can do categories.forEach(async category => {
+//   const selections = await avinodeSearcher(
+//     user.avinodeEmail,
+//     user.avinodePassword,
+//     from,
+//     to,
+//     date,
+//     time,
+//     date2,
+//     time2,
+//     pax,
+//     category
+//   );
+//   return selections;
+// });
+
+// log on
+// search inputs
+// click search
+// click category
+// quit
