@@ -1,18 +1,28 @@
 import axios from "axios";
-import { useState } from "react";
-import Spinner from "./Spinner";
+import { useState, useEffect } from "react";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import CircularProgress from "@mui/material/CircularProgress";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 
-function FlpCredentials({
-  onPrevStep,
-  setFlpemail,
-  setFlppwd,
-  onSubmit,
-}) {
+function FlpCredentials({ onPrevStep, setFlpemail, setFlppwd, onSubmit }) {
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
-  const [isValidCredentials, setIsValidCredentials] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -26,7 +36,8 @@ function FlpCredentials({
         console.log("response", response.data);
         setFlpemail(email);
         setFlppwd(pwd);
-        setIsValidCredentials(true);
+        setOpen(true);
+        setErrMsg("Successfully logged in");
       } else {
         setErrMsg("Invalid Credentials");
       }
@@ -40,73 +51,80 @@ function FlpCredentials({
     setLoading(false);
   };
 
-  const sendToNextStep = () => {
-    //wait for 3 seconds then call onSubmit
-    setTimeout(() => {
-      onSubmit();
-    }, 3000);
-  };
+  useEffect(() => {
+    // show snackbar if there is an error
+    if (errMsg) {
+      setTimeout(() => {
+        setErrMsg("");
+      }, 6000);
+      setOpen(true);
+    }
+  }, [errMsg]);
 
-  if (errMsg) {
+  //if errMsg === "Successfully logged in" then show success message and call onNextStep
+  if (errMsg === "Successfully logged in") {
     setTimeout(() => {
       setErrMsg("");
-    }, 2000);
-
-    return (
-      <section>
-        <p className="errmsg">{errMsg}</p>
-      </section>
-    );
-  }
-
-  if (isValidCredentials) {
-    return (
-      <section>
-        <h2>Account Created</h2>
-        {sendToNextStep()}
-      </section>
-    );
-  }
-
-  if (loading) {
-    return <Spinner />;
+      onSubmit();
+    }, 3000);
   }
 
   return (
-    <>
-      {errMsg && <p>{errMsg}</p>}
-      <section>
-      <div className="login-form">
-        <h1 className="login-title2">
-          Enter <span className="italic"> FlightListPro.com </span> Credentials
-        </h1>
-        <form onSubmit={handleSubmit} className="form-container">
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            placeholder="FLP Email"
-          />
-          <br/>
-          <input
-            type="password"
-            id="password"
-            value={pwd}
-            onChange={e => setPwd(e.target.value)}
-            required
-            placeholder="FLP Password"
-          />
-          <br />
-          <div className="btn-wrapper2">
-            <button type="submit" className="forward">Submit</button>
-           <button type="button" onClick={onPrevStep} className="back">Back</button>
-          </div>
+    <Container maxWidth="sm">
+      <Box mt={8}>
+        <Typography variant="h4" align="center">
+          FlightListPro Credentials
+        </Typography>
+      </Box>
+      <Box mt={2}>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                label="username"
+                type="text"
+                fullWidth
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="password"
+                label="Password"
+                type="password"
+                fullWidth
+                value={pwd}
+                onChange={e => setPwd(e.target.value)}
+              />
+            </Grid>
+          </Grid>
+          <Box mt={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={loading || !email || !pwd}
+              fullWidth>
+              {loading ? <CircularProgress size={24} /> : "Next"}
+            </Button>
+          </Box>
         </form>
-      </div>
-      </section>
-    </>
+      </Box>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={handleClose}
+          severity={errMsg === "Invalid Credentials" ? "error" : "success"}>
+          {errMsg}
+        </MuiAlert>
+      </Snackbar>
+    </Container>
   );
 }
 

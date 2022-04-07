@@ -171,6 +171,7 @@ const flightListPro = async (
       }
       return arr;
     });
+
     allFlights.push(...flightPicker);
     // if there is a next page button then click it
     const nextPage = await page.evaluate(() => {
@@ -195,8 +196,11 @@ const flightListPro = async (
     }
     return allFlights;
   };
+ allSelects.push(...await flightPick());
+  ///////////////////////////////////
 
-  await flightPick();
+
+
 
   page.waitForTimeout(500);
 
@@ -241,13 +245,15 @@ ${passengers} Pax
   Thanks.`);
   }
 
-  // await page.waitForSelector(
-  //   "#frmSendFeedback > table:nth-child(12) > tbody > tr:nth-child(18) > td > input:nth-child(1)"
-  // );
-  // await page.click(
-  //   "#frmSendFeedback > table:nth-child(12) > tbody > tr:nth-child(18) > td > input:nth-child(1)"
-  // );
+  await page.waitForSelector(
+    "#frmSendFeedback > table:nth-child(12) > tbody > tr:nth-child(18) > td > input:nth-child(1)"
+  );
+  await page.click(
+    "#frmSendFeedback > table:nth-child(12) > tbody > tr:nth-child(18) > td > input:nth-child(1)"
+  );
 
-  // await browser.close();
-  return;
+  await browser.close();
+  console.log("allSelects", allSelects);
+
+  return allSelects;
 };

@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import Spinner from "./Spinner";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import CircularProgress from "@mui/material/CircularProgress";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 
 function AvinodeCredentials({
   avinodeEmail,
@@ -14,9 +21,16 @@ function AvinodeCredentials({
 }) {
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
-  const [isValidCredentials, setIsValidCredentials] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -30,8 +44,8 @@ function AvinodeCredentials({
         console.log("response", response.data);
         setAvinodeEmail(email);
         setAvinodePwd(pwd);
-        setIsValidCredentials(true);
-        onNextStep();
+        setOpen(true);
+        setErrMsg("Successfully logged in");
       } else {
         setErrMsg("Invalid Credentials");
       }
@@ -45,57 +59,81 @@ function AvinodeCredentials({
     setLoading(false);
   };
 
-  if (errMsg) {
+  useEffect(() => {
+    // show snackbar if there is an error
+    if (errMsg) {
+      setTimeout(() => {
+        setErrMsg("");
+      }, 6000);
+      setOpen(true);
+    }
+  }, [errMsg]);
+
+  //if errMsg === "Successfully logged in" then show success message and call onNextStep
+  if (errMsg === "Successfully logged in") {
     setTimeout(() => {
       setErrMsg("");
+      onNextStep();
     }, 3000);
-
-    return (
-      <section>
-        <p className="errmsg">{errMsg}</p>
-      </section>
-    );
-  }
-
-  if (loading) {
-    return <Spinner />;
   }
 
   return (
-    <>
-      {errMsg && <h3>{errMsg}</h3>}
-      <section>
-        <div className="login-form">
-        <h1 className="login-title2">
-          Enter <span className="italic"> Avinode.com </span> Credentials
-        </h1>
-        <form onSubmit={handleSubmit} className="form-container" >
-          <input
-            type="text"
-            id="text"
-            autoComplete="off"
-            onChange={e => setEmail(e.target.value)}
-            required
-            aria-describedby="uidnote"
-            placeholder="Avenode email"
-          />
-          <br />
-          <input
-            type="password"
-            id="password"
-            required
-            onChange={e => setPwd(e.target.value)}
-            placeholder="Avenode password"
-          />
-          <br />
-          <div className="btn-wrapper2">
-            <button type="submit" className="forward">Submit</button>
-           <button type="button" onClick={onPrevStep} className="back">Back</button>
-          </div>
+    <Container maxWidth="sm">
+      <Box mt={8}>
+        <Typography variant="h4" align="center">
+          Avinode Credentials
+        </Typography>
+      </Box>
+      <Box mt={2}>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                label="username"
+                type="text"
+                fullWidth
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="password"
+                label="Password"
+                type="password"
+                fullWidth
+                value={pwd}
+                onChange={e => setPwd(e.target.value)}
+              />
+            </Grid>
+          </Grid>
+          <Box mt={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={loading || !email || !pwd}
+              fullWidth>
+              {loading ? <CircularProgress size={24} /> : "Next"}
+            </Button>
+          </Box>
         </form>
-        </div>
-      </section>
-    </>
+      </Box>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={handleClose}
+          severity={errMsg === "Invalid Credentials" ? "error" : "success"}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+          {errMsg}
+        </MuiAlert>
+      </Snackbar>
+    </Container>
   );
 }
 

@@ -5,17 +5,19 @@ import App from "./App";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import reportWebVitals from "./tests/reportWebVitals";
 import { AuthProvider } from "./context/AuthProvider";
+import CssBaseline from "@mui/material/CssBaseline";
 
 const rootElement = document.getElementById("root");
 
 ReactDOM.render(
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/*" element={<App />} />
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>,
+  <BrowserRouter>
+    <CssBaseline />
+    <AuthProvider>
+      <Routes>
+        <Route path="/*" element={<App />} />
+      </Routes>
+    </AuthProvider>
+  </BrowserRouter>,
   rootElement
 );
 

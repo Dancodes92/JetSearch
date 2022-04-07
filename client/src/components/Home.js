@@ -1,41 +1,56 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Container, Paper, Typography, Stack, Button } from "@mui/material";
+import { Typography, Stack, Button, Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+
+  const navigate = useNavigate();
   // show button to got to "/flpSearch"
 
   // return Links to other pages
   return (
-    <Container maxWidth="md">
-      <Paper>
-        <Stack spacing={3}>
-          <Typography variant="h4">Welcome to Avinode</Typography>
-          <Typography variant="body1">
-            Avinode is a web application that helps you find the best flights
-            to your destination.
-          </Typography>
-          </Stack>
-          <Stack spacing={3}>
-            <Button
-              variant="contained"
-              color="primary"
-              component={Link}
-              to="/flpSearch"
-            >
-              Search Flights
-            </Button>
-            <Button
-              variant="contained"
-             
-              component={Link}
-              to="/avinodeSearch"
-            >
-              Search Avinode
-            </Button>
-          </Stack>
-      </Paper>
-    </Container>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      sx={{
+        flexGrow: 1,
+        height: "100vh",
+        width: "100vw",
+        pb: "10vh",
+      }}>
+      <Stack spacing={3}>
+        <Typography variant="h4">Welcome to JetSearch.info</Typography>
+        <Typography variant="caption">
+          A faster way to source flights from Avinode and FlightListPro...
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("/flpSearch")}>
+          FlightListPro (One-Way)
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("/flpSearchroundtrip")}>
+          FlightListPro (Round-Trip)
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("/avinodeSearch")}>
+          Avinode
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("/avroundtrip")}>
+          Avinode (Round-Trip)
+        </Button>
+      </Stack>
+    </Box>
   );
 }
 export default Home;

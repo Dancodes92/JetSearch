@@ -1,120 +1,94 @@
 import React, { useRef, useState, useEffect } from "react";
-import {
-  faCheck,
-  faTimes,
-  faInfoCircle,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  faFontAwesomeIcon,
-  FontAwesomeIcon,
-} from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import logo from "../2.png";
+import Link from "@mui/material/Link";
 
 function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
-  const userRef = useRef();
-  const errRef = useRef();
-  const [errMsg, setErrMsg] = useState("");
-  const [userFocus, setUserFocus ] = useState(false);
-  const [pwdFocus, setPwdFocus] = useState(false);
-  const [matchPwd, setMatchPwd] = useState(false);
-  const [validMatch, setValidMatch] = useState(false);
-  const [matchFocus, setMatchFocus] = useState(false);
+  const [confirmPwd, setConfirmPwd] = useState("");
 
-  useEffect(() => {
-    userRef.current.focus();
-  }, []);
+  const doPasswordsMatch = () => {
+    if (pwd === confirmPwd) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
-  useEffect(() => {
-    const match = pwd === matchPwd;
-    setValidMatch(match);
-  }, [pwd, matchPwd]);
-
-  useEffect(() => {
-    setErrMsg("");
-  }, [email, pwd, matchPwd]);
-
-  const canClickNext = [email, pwd, matchPwd].every(Boolean);
+  const canClickNext = [email, pwd].every(Boolean);
 
   return (
-    <section>
-      <p
-        ref={errRef}
-        className={errMsg ? "errmsg" : "offscreen"}
-        aria-live="assertive"
-      >
-        {errMsg}
-      </p>
-      <div className="login-form">
-      <h1 className="login-title">Sign Up</h1>
-      <form className="form-container">
-        <input
-          type="email"
-          id="email"
-          ref={userRef}
-          autoComplete="off"
-          onChange={e => setEmail(e.target.value)}
-          required
-          aria-describedby="uidnote"
-          onFocus={() => setUserFocus(true)}
-          onBlur={() => setUserFocus(false)}
-          placeholder="Email"
-        />
-        <br />
-        <input
-          type="password"
-          id="password"
-          required
-          onChange={e => setPwd(e.target.value)}
-          onFocus={() => setPwdFocus(true)}
-          onBlur={() => setPwdFocus(false)}
-          placeholder="Password"
-        />
-        <input
-          type="password"
-          id="confirm_pwd"
-          onChange={e => setMatchPwd(e.target.value)}
-          required
-          aria-describedby="confirmnote"
-          onFocus={() => setMatchFocus(true)}
-          onBlur={() => setMatchFocus(false)}
-          placeholder="Confirm Password"
-        />
-        <br />
-          <span className={validMatch && matchPwd ? "valid" : "hide"}>
-            <FontAwesomeIcon icon={faCheck} />
-          </span>
-          <span className={validMatch || !matchPwd ? "hide" : "invalid"}>
-            <FontAwesomeIcon icon={faTimes} />
-          </span>
-        <p
-          id="confirmnote"
-          className={matchFocus && !validMatch ? "instructions" : "offscreen"}
-        >
-          <FontAwesomeIcon icon={faInfoCircle} />
-          Password does not match!
-        </p>
-        {canClickNext ? (
-        <button
-          onClick={() => {
-            onNextStep();
-          }}
-          className="login-btn"
-        >
-          Next
-        </button>
-        ) : (
-          null
-        )}
-      </form>
-      <p className="need-account">
-        Already a Member?
-        <br />
-        <span className="line">
-          <Link to="/login">Login</Link>
-        </span>
-      </p>
-      </div>
-    </section>
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}>
+        <img src={logo} alt="JetSearch Logo" width="150px" height="150px" />
+
+        <Typography variant="body1">Sign up</Typography>
+        <Box component="form" onSubmit={onNextStep} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            helperText="Please enter your email address"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            helperText="Please enter your password"
+            value={pwd}
+            onChange={e => setPwd(e.target.value)}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            helperText="Password must match"
+            value={confirmPwd}
+            onChange={e => setConfirmPwd(e.target.value)}
+            error={!doPasswordsMatch()}
+          />
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            disabled={!canClickNext}
+            sx={{ mt: 3, mb: 2 }}>
+            Next
+          </Button>
+          <Grid container>
+            <Grid item>
+              <Link href="/login" variant="body2">
+                {"Already have an account? Sign In"}
+              </Link>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
+    </Container>
   );
 }
 

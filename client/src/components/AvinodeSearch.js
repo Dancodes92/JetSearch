@@ -1,10 +1,20 @@
 import React from "react";
-import { Link, useNavigate, useMatch,
-  useResolvedPath, } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Spinner from "./Spinner";
-
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import CircularProgress from "@mui/material/CircularProgress";
+import Snackbar from "@mui/material/Snackbar";
+import Checkbox from "@mui/material/Checkbox";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 
 function AvinodeSearch() {
   //from, to, date, time, pax, always select minimum cat
@@ -18,12 +28,12 @@ function AvinodeSearch() {
   const [categories, setCategories] = useState([]);
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
-const canClick = [from, to, date, time, pax].every(
+  const canClick = [from, to, date, time, pax, categories].every(
     item => item !== ""
   );
-
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -74,306 +84,311 @@ const canClick = [from, to, date, time, pax].every(
     setDate(newDate);
   };
 
-  if (loading) {
-    return <Spinner />;
-  }
-
-  if (errMsg) {
-    return (
-      <section>
-        <h2>{errMsg}</h2>
-        <Link to="/">Search Again</Link>
-      </section>
-    );
-  }
+  useEffect(() => {
+    // show snackbar if there is an error
+    if (errMsg) {
+      setTimeout(() => {
+        setErrMsg("");
+      }, 6000);
+      setOpen(true);
+    }
+  }, [errMsg]);
 
   return (
-    <section>
-      <div className="link-container">
-        <Link to="/avroundtrip">
-          <h5 className="roundtrip-btn">Go To Round Trip</h5>
-        </Link>
-      </div>
-      <div className="avinode-search">
-        <form onSubmit={handleSubmit}>
-          <div className="text-inputs">
-            <div className="form-group">
-              <label htmlFor="from">From</label>
-              <input
+    <Container maxWidth="sm">
+      <form onSubmit={handleSubmit}>
+        <Box mt={3}>
+          <Typography
+            variant="h4"
+            align="center"
+            sx={{
+              fontFamily: "sans-serif",
+            }}>
+            Avinode
+          </Typography>
+          <Typography variant="body1" component="p" align="center">
+            One-Way Flights
+          </Typography>
+        </Box>
+        <Box mt={2}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                label="From"
                 type="text"
-                className="form-control2"
-                id="from"
-                placeholder="From"
+                fullWidth
                 value={from.toUpperCase()}
                 onChange={e => setFrom(e.target.value.toUpperCase())}
               />
-            </div>
-            <div className="form-group">
-              <label htmlFor="to">To</label>
-              <input
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="To"
                 type="text"
-                className="form-control2"
-                id="to"
-                placeholder="To"
-                value={to.toLocaleUpperCase()}
+                fullWidth
+                value={to.toUpperCase()}
                 onChange={e => setTo(e.target.value.toUpperCase())}
               />
-            </div>
-              </div>
-              <div className="text-inputs">
-            <div className="form-group">
-              <label htmlFor="date">Date</label>
-              <input
-                type="date"
-                className="form-control3"
-                id="date"
-                placeholder="Date"
-                onChange={handleDate}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="time">Time</label>
-              <input
+            </Grid>
+            <Grid item xs={12}>
+              <TextField type="date" fullWidth onChange={handleDate} />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
                 type="time"
-                className="form-control4"
-                id="Time"
-                placeholder="Time"
+                fullWidth
                 value={time}
                 onChange={e => setTime(e.target.value)}
               />
-            </div>
-          <div className="form-group">
-            <label htmlFor="pax">Pax</label>
-            <input
-              type="number"
-              className="form-control-pax"
-              id="pax"
-              placeholder="Pax"
-              value={pax}
-              onChange={e => setPax(e.target.value)}
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Number of Passengers"
+                type="number"
+                fullWidth
+                value={pax}
+                autoComplete="off"
+                onChange={e => setPax(e.target.value)}
               />
-          </div>
-              </div>
-          <div className="form-group-checkbox">
-            <div className="form-group">
-              <h3 className="form-group-title">Categories</h3>
-              <div className="form-group-checkbox-container">
-                <div className="form-group-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="Piston"
-                    value="Piston"
-                    onChange={e =>
-                      setCategories(
-                        e.target.checked
-                          ? [...categories, e.target.value]
-                          : categories.filter(cat => cat !== e.target.value)
-                      )
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">Categories</FormLabel>
+                <FormGroup
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    justifyContent: "space-between",
+                  }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={categories.includes("Piston")}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setCategories([...categories, "Piston"]);
+                          } else {
+                            setCategories(
+                              categories.filter(item => item !== "Piston")
+                            );
+                          }
+                        }}
+                        name="checkedC"
+                        color="primary"
+                      />
                     }
+                    label="Piston"
                   />
-
-                  <label htmlFor="Piston">
-                    <span>
-                      <i className="fas fa-plane-departure">Piston</i>
-                    </span>
-                  </label>
-                </div>
-                <div className="form-group-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="Turbo prop"
-                    value="Turbo prop"
-                    onChange={e =>
-                      setCategories(
-                        e.target.checked
-                          ? [...categories, e.target.value]
-                          : categories.filter(cat => cat !== e.target.value)
-                      )
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={categories.includes("Turbo prop")}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setCategories([...categories, "Turbo prop"]);
+                          } else {
+                            setCategories(
+                              categories.filter(item => item !== "Turbo prop")
+                            );
+                          }
+                        }}
+                        name="checkedC"
+                        color="primary"
+                      />
                     }
+                    label="Turbo prop"
                   />
-
-                  <label htmlFor="Turbo prop">
-                    <span>
-                      <i className="fas fa-plane-departure">Turbo prop</i>
-                    </span>
-                  </label>
-                </div>
-                <div className="form-group-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="Entry level jet (VLJ)"
-                    value="Entry level jet (VLJ)"
-                    onChange={e =>
-                      setCategories(
-                        e.target.checked
-                          ? [...categories, e.target.value]
-                          : categories.filter(cat => cat !== e.target.value)
-                      )
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={categories.includes("Entry level jet (VLJ)")}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setCategories([
+                              ...categories,
+                              "Entry level jet (VLJ)",
+                            ]);
+                          } else {
+                            setCategories(
+                              categories.filter(
+                                item => item !== "Entry level jet (VLJ)"
+                              )
+                            );
+                          }
+                        }}
+                        name="checkedC"
+                        color="primary"
+                      />
                     }
+                    label="Entry level jet (VLJ)"
                   />
-
-                  <label htmlFor="Entry level jet (VLJ)">
-                    <span>
-                      <i className="fas fa-plane-departure">
-                        Entry level jet (VLJ)
-                      </i>
-                    </span>
-                  </label>
-                </div>
-                <div className="form-group-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="Light jet"
-                    value="Light jet"
-                    onChange={e =>
-                      setCategories(
-                        e.target.checked
-                          ? [...categories, e.target.value]
-                          : categories.filter(cat => cat !== e.target.value)
-                      )
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={categories.includes("Light jet")}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setCategories([...categories, "Light jet"]);
+                          } else {
+                            setCategories(
+                              categories.filter(item => item !== "Light jet")
+                            );
+                          }
+                        }}
+                        name="checkedC"
+                        color="primary"
+                      />
                     }
+                    label="Light jet"
                   />
-
-                  <label htmlFor="Light jet">
-                    <span>
-                      <i className="fas fa-plane-departure">Light jet</i>
-                    </span>
-                  </label>
-                </div>
-                <div className="form-group-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="Super light jet"
-                    value="Super light jet"
-                    onChange={e =>
-                      setCategories(
-                        e.target.checked
-                          ? [...categories, e.target.value]
-                          : categories.filter(cat => cat !== e.target.value)
-                      )
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={categories.includes("Super light jet")}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setCategories([...categories, "Super light jet"]);
+                          } else {
+                            setCategories(
+                              categories.filter(
+                                item => item !== "Super light jet"
+                              )
+                            );
+                          }
+                        }}
+                        name="checkedC"
+                        color="primary"
+                      />
                     }
+                    label="Super light jet"
                   />
-
-                  <label htmlFor="Super light jet">
-                    <span>
-                      <i className="fas fa-plane-departure">Super light jet</i>
-                    </span>
-                  </label>
-                </div>
-                <div className="form-group-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="Midsize jet"
-                    value="Midsize jet"
-                    onChange={e =>
-                      setCategories(
-                        e.target.checked
-                          ? [...categories, e.target.value]
-                          : categories.filter(cat => cat !== e.target.value)
-                      )
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={categories.includes("Midsize jet")}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setCategories([...categories, "Midsize jet"]);
+                          } else {
+                            setCategories(
+                              categories.filter(item => item !== "Midsize jet")
+                            );
+                          }
+                        }}
+                        name="checkedC"
+                        color="primary"
+                      />
                     }
+                    label="Midsize jet"
                   />
-
-                  <label htmlFor="Midsize jet">
-                    <span>
-                      <i className="fas fa-plane-departure">Midsize jet</i>
-                    </span>
-                  </label>
-                </div>
-                <div className="form-group-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="Super midsize jet"
-                    value="Super midsize jet"
-                    onChange={e =>
-                      setCategories(
-                        e.target.checked
-                          ? [...categories, e.target.value]
-                          : categories.filter(cat => cat !== e.target.value)
-                      )
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={categories.includes("Super midsize jet")}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setCategories([...categories, "Super midsize jet"]);
+                          } else {
+                            setCategories(
+                              categories.filter(
+                                item => item !== "Super midsize jet"
+                              )
+                            );
+                          }
+                        }}
+                        name="checkedC"
+                        color="primary"
+                      />
                     }
+                    label="Super midsize jet"
                   />
-
-                  <label htmlFor="Super midsize jet">
-                    <span>
-                      <i className="fas fa-plane-departure">
-                        Super midsize jet
-                      </i>
-                    </span>
-                  </label>
-                </div>
-                <div className="form-group-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="Heavy jet"
-                    value="Heavy jet"
-                    onChange={e =>
-                      setCategories(
-                        e.target.checked
-                          ? [...categories, e.target.value]
-                          : categories.filter(cat => cat !== e.target.value)
-                      )
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={categories.includes("Heavy jet")}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setCategories([...categories, "Heavy jet"]);
+                          } else {
+                            setCategories(
+                              categories.filter(item => item !== "Heavy jet")
+                            );
+                          }
+                        }}
+                        name="checkedC"
+                        color="primary"
+                      />
                     }
+                    label="Heavy jet"
                   />
-
-                  <label htmlFor="Heavy jet">
-                    <span>
-                      <i className="fas fa-plane-departure">Heavy jet</i>
-                    </span>
-                  </label>
-                </div>
-                <div className="form-group-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="Ultra long range"
-                    value="Ultra long range"
-                    onChange={e =>
-                      setCategories(
-                        e.target.checked
-                          ? [...categories, e.target.value]
-                          : categories.filter(cat => cat !== e.target.value)
-                      )
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={categories.includes("Ultra long range")}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setCategories([...categories, "Ultra long range"]);
+                          } else {
+                            setCategories(
+                              categories.filter(
+                                item => item !== "Ultra long range"
+                              )
+                            );
+                          }
+                        }}
+                        name="checkedC"
+                        color="primary"
+                      />
                     }
+                    label="Ultra long range"
                   />
-
-                  <label htmlFor="Ultra long range">
-                    <span>
-                      <i className="fas fa-plane-departure">Ultra long range</i>
-                    </span>
-                  </label>
-                </div>
-                <div className="form-group-checkbox-item">
-                  <input
-                    type="checkbox"
-                    id="VIP airliner"
-                    value="VIP airliner"
-                    onChange={e =>
-                      setCategories(
-                        e.target.checked
-                          ? [...categories, e.target.value]
-                          : categories.filter(cat => cat !== e.target.value)
-                      )
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={categories.includes("VIP airliner")}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setCategories([...categories, "VIP airliner"]);
+                          } else {
+                            setCategories(
+                              categories.filter(item => item !== "VIP airliner")
+                            );
+                          }
+                        }}
+                        name="checkedC"
+                        color="primary"
+                      />
                     }
+                    label="VIP airliner"
                   />
-
-                  <label htmlFor="VIP airliner">
-                    <span>
-                      <i className="fas fa-plane-departure">VIP airliner</i>
-                    </span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {canClick && categories.length > 0 && (
-            <button type="submit" className="btn btn-primary">
-              Select Jets
-            </button>
-          )}
-        </form>
-      </div>
-    </section>
+                </FormGroup>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={!canClick || loading}
+                fullWidth
+                type="submit">
+                {loading ? <CircularProgress size={24} /> : "Search"}
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </form>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        open={open}
+        autoHideDuration={6000}
+        onClose={() => setOpen(false)}
+        message={errMsg}
+      />
+    </Container>
   );
 }
 
