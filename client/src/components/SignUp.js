@@ -25,8 +25,15 @@ function SignUp() {
   const registerUser = async () => {
     try {
       const res = await axios.post(
-        "auth/signup",
-        { email, password: pwd, flightListProEmail: flpemail, flightListProPassword: flppwd, avinodeEmail, avinodePassword: avinodePwd },
+        "https://jetsearcher.herokuapp.com/auth/signup",
+        {
+          email,
+          password: pwd,
+          flightListProEmail: flpemail,
+          flightListProPassword: flppwd,
+          avinodeEmail,
+          avinodePassword: avinodePwd,
+        }
       );
       window.localStorage.setItem("token", res.data.token);
       const token = res?.data?.token;
@@ -43,7 +50,7 @@ function SignUp() {
     }
   };
 
-  if(errMsg) {
+  if (errMsg) {
     setTimeout(() => {
       setErrMsg("");
     }, 3000);
@@ -74,18 +81,18 @@ function SignUp() {
           onNextStep={onNextStep}
         />
       );
-      case 2:
-        return (
-          <AvinodeCredentials
-            onNextStep={onNextStep}
-            onPrevStep={onPrevStep}
-            avinodeEmail={avinodeEmail}
-            avinodePwd={avinodePwd}
-            setAvinodeEmail={setAvinodeEmail}
-            setAvinodePwd={setAvinodePwd}
-            step={step}
-          />
-        );
+    case 2:
+      return (
+        <AvinodeCredentials
+          onNextStep={onNextStep}
+          onPrevStep={onPrevStep}
+          avinodeEmail={avinodeEmail}
+          avinodePwd={avinodePwd}
+          setAvinodeEmail={setAvinodeEmail}
+          setAvinodePwd={setAvinodePwd}
+          step={step}
+        />
+      );
     case 3:
       return (
         <FlpCredentials

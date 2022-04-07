@@ -42,7 +42,7 @@ function Search() {
       setIsError(false);
       const airport = from.toUpperCase();
       const res = await axios.post(
-        "api/search",
+        "https://jetsearcher.herokuapp.com/api/search",
         {
           airport,
           to,

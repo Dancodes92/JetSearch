@@ -12,6 +12,9 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import logo from "../2.png";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function Copyright(props) {
   return (
@@ -34,27 +37,50 @@ const theme = createTheme();
 
 export default function Login() {
   const { setAuth } = useAuth();
+  const [errMsg, setErrMsg] = useState("");
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
+    setLoading(true);
     const data = new FormData(e.currentTarget);
     const email = data.get("email");
     const pwd = data.get("password");
 
     try {
-      const response = await axios.post("auth/login", { email, password: pwd });
+      const response = await axios.post(
+        "https://jetsearcher.herokuapp.com/auth/login",
+        { email, password: pwd }
+      );
       window.localStorage.setItem("token", response.data.token);
       const token = response?.data?.token;
       setAuth({ email, pwd, token });
       navigate("/");
     } catch (err) {
-      if (!err?.response) {
-        console.log(err.response);
-      }
+      setErrMsg("Invalid Credentials");
     }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    // show snackbar if there is an error
+    if (errMsg) {
+      setTimeout(() => {
+        setErrMsg("");
+      }, 6000);
+      setOpen(true);
+    }
+  }, [errMsg]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -101,8 +127,9 @@ export default function Login() {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}>
-              Sign In
+              sx={{ mt: 3, mb: 2 }}
+              disabled={loading}>
+              {loading ? <CircularProgress /> : "Sign In"}
             </Button>
             <Grid container>
               <Grid item>
@@ -114,6 +141,20 @@ export default function Login() {
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
+        <Snackbar
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            onClose={handleClose}
+            severity="error"
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+            {errMsg}
+          </MuiAlert>
+        </Snackbar>
       </Container>
     </ThemeProvider>
   );
