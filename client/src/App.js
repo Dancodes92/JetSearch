@@ -17,14 +17,17 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route path="login" element={<Login />} />
-        <Route path="signup" element={<SignUp />} />
-        <Route path="unauthorized" element={<Unauthorized />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
         {/* protect */}
         <Route element={<RequireAuth />}>
           <Route path="/" element={<Home />} />
           <Route path="/flpSearch" element={<FlightListProSearch />} />
-          <Route path="/flpSearchroundtrip" element={<FlightListProSearchRoundTrip />} />
+          <Route
+            path="/flpSearchroundtrip"
+            element={<FlightListProSearchRoundTrip />}
+          />
           <Route path="/avinodeSearch" element={<AvinodeSearch />} />
           <Route path="/avroundtrip" element={<AvinodeRoundTrip />} />
           <Route path="/results" element={<Results />} />

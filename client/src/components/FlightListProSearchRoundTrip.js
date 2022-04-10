@@ -113,7 +113,7 @@ function SearchRoundTrip() {
           variant="body1"
           component="p"
           style={{ marginBottom: "1rem" }}>
-          One-Way Flights
+          Round Trip
         </Typography>
         <form onSubmit={handleSubmit}>
           <Box mt={2}>

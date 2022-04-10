@@ -34,6 +34,7 @@ function Navbar() {
                 margin: "0px",
                 padding: "0px",
                 cursor: "pointer",
+                marginTop: "5px",
               }}
             />
           </Link>

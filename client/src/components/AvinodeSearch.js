@@ -107,7 +107,7 @@ function AvinodeSearch() {
             Avinode
           </Typography>
           <Typography variant="body1" component="p" align="center">
-            One-Way Flights
+            One-Way
           </Typography>
         </Box>
         <Box mt={2}>
@@ -371,7 +371,10 @@ function AvinodeSearch() {
                 color="primary"
                 disabled={!canClick || loading}
                 fullWidth
-                type="submit">
+                type="submit"
+                sx={{
+                  marginBottom: "1rem",
+                }}>
                 {loading ? <CircularProgress size={24} /> : "Search"}
               </Button>
             </Grid>

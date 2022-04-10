@@ -116,7 +116,7 @@ function AvinodeRoundTrip() {
             Avinode
           </Typography>
           <Typography variant="body1" component="p" align="center">
-            One-Way Flights
+            Round Trip
           </Typography>
         </Box>
         <Box mt={2}>
@@ -403,7 +403,10 @@ function AvinodeRoundTrip() {
                 color="primary"
                 disabled={!canClick || loading}
                 fullWidth
-                type="submit">
+                type="submit"
+                sx={{
+                  marginBottom: "1rem",
+                }}>
                 {loading ? <CircularProgress size={24} /> : "Search"}
               </Button>
             </Grid>

@@ -112,7 +112,7 @@ function Search() {
           component="p"
           style={{ marginBottom: "1rem" }}
         >
-          One-Way Flights
+          One-Way
         </Typography>
         <form onSubmit={handleSubmit}>
           <Box mt={2}>
