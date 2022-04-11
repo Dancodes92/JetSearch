@@ -213,6 +213,7 @@ const avinodeSearcher = async (
 
   await startSelecting();
   await browser.close();
+  console.log("selections", selections);
   return selections;
 };
 
@@ -253,6 +254,7 @@ router.post("/", async (req, res) => {
       );
       selections = selections.concat(x);
     }
+    console.log("selections", selections);
     res.send(selections);
   } catch (err) {
     console.log(err);

@@ -1,28 +1,52 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import { List, ListItem, ListItemText, Box, Typography, Button } from "@mui/material";
 
 function Results() {
   const location = useLocation();
   console.log("location", location);
 
-  //concat the arrays from the location.state.flights into one array
-  let flightArray = [];
-  for (let i = 0; i < location.state.flights.length; i++) {
-    flightArray = flightArray.concat(location.state.flights[i]);
-  }
-  console.log("flightArray", flightArray);
+  // first flatten the array location.state.flights
+  const flights = location.state.flights.reduce((acc, curr) => {
+    return acc.concat(curr);
+  }, []);
+
+  // now filter out null values
+  const filteredFlights = flights.filter(flight => flight !== null);
+
+  console.log("filteredFlights", filteredFlights);
+  // if filteredFlights.company exists, we need to alter the array to be an array of no objects `${filteredFlights.company}, ${filteredFlights.jet}`
+
+  const flightsList = filteredFlights.map((flight, index) => {
+
+    if(flight.company) {
+
+    //  return `${flight.company}, ${flight.jet}`
+    return (
+      <ListItem key={index}>
+        <ListItemText primary={`${flight.company}, ${flight.jet}`} />
+      </ListItem>
+    );
+    } else {
+      return (
+        <ListItem key={index}>
+          <ListItemText primary={`${flight}`} />
+        </ListItem>
+      );
+    }
+  });
+
   return (
-    <section>
-      <h1 className="results-title">Results</h1>
-      <div className="results_list">
-        {flightArray.map((result, i) => (
-          <div key={i}>
-            <div><span style={{ color:"dodgerblue" }}>{result.company}</span> {result.jet}</div>
-          </div>
-        ))}
-      </div>
-      <Link to="/">Search Again</Link>
-      </section>
+    <Box>
+      <Link to="/">
+        <Button>Back</Button>
+      </Link>
+      <Typography variant="h4">Results</Typography>
+      <Typography variant="h6">{filteredFlights.length} flights found</Typography>
+      <List>
+        {flightsList}
+      </List>
+    </Box>
   );
 }
 

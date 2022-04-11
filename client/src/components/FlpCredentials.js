@@ -66,7 +66,7 @@ function FlpCredentials({ onPrevStep, setFlpemail, setFlppwd, onSubmit }) {
     setTimeout(() => {
       setErrMsg("");
       onSubmit();
-    }, 3000);
+    }, 500);
   }
 
   return (

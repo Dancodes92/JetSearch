@@ -92,7 +92,7 @@ const flightListPro = async (
 
   await page.waitForSelector("tbody > tr > .bold > #radiusDiv > select");
   await page.click("tbody > tr > .bold > #radiusDiv > select");
-  await page.select("tbody > tr > .bold > #radiusDiv > select", `${radius}`); // selects 1000 mile radius from airport
+  await page.select("tbody > tr > .bold > #radiusDiv > select", `${radius}`);
 
   await page.waitForSelector("#pax");
   await page.click("#pax");
@@ -134,9 +134,8 @@ const flightListPro = async (
   var allSelects = [];
   // recursively re-write the flightPick function if there is a next page button then keep clicking
   const flightPick = async () => {
-    let allFlights = [];
+    // an array of each plane clicked
     const flightPicker = await page.evaluate(() => {
-      let arr = [];
       let opAndJet = [];
       const companyName = document.querySelectorAll(
         "#frmSelect > table > tbody > tr > td:nth-child(2) > a"
@@ -157,22 +156,22 @@ const flightListPro = async (
         let curCompanyName = companyName[i];
         let curJet = jetType[i];
         let compAndType = `${curCompanyName.innerText} ${curJet.innerText}`;
+
         if (
           !opAndJet.includes(compAndType) &&
           tailNumber[i].innerText.charAt(1) === "N"
         ) {
           button[i].click();
           opAndJet.push(`${curCompanyName.innerText} ${curJet.innerText}`);
-          arr.push({
-            company: curCompanyName.innerText,
-            jet: curJet.innerText,
-          });
         }
       }
-      return arr;
+      // we need to return the opAndJet array so that it can be used in the next page function and add it to the allSelects array
+      return opAndJet;
     });
 
-    allFlights.push(...flightPicker);
+    allSelects.push(flightPicker);
+
+
     // if there is a next page button then click it
     const nextPage = await page.evaluate(() => {
       const nextPage = document.querySelectorAll(
@@ -188,18 +187,21 @@ const flightListPro = async (
         return false;
       }
     });
-    console.log("nextPage", nextPage);
+
     if (nextPage) {
       await page.waitForNavigation();
       await flightPick();
       await page.waitForTimeout(1000);
+    } else {
+      // if there is no next page button then return the opAndJet array
+      return allSelects;
     }
-    return allFlights;
   };
- allSelects.push(...await flightPick());
-  ///////////////////////////////////
 
-
+  // call the flightPick function
+  const opAndJet = await flightPick();
+  // add the opAndJet array to the allSelects array
+  allSelects.push(opAndJet);
 
 
   page.waitForTimeout(500);
@@ -221,21 +223,30 @@ const flightListPro = async (
   await page.waitForTimeout(500);
 
   if (date2) {
+    const subjectBox = await page.$("#subject");
+    // click three times to clear the subject box
+    await subjectBox.click({ clickCount: 3 });
+    await subjectBox.type(`NEED RT: ${date} - ${date2} ${airport} - ${to} - ${airport} ${passengers} PAX`);
     const textBox = await page.$("#comments");
     await textBox.type(`Hi Team,
 Please quote the following round trip-
 
 ${date} (${time})
 ${airport} to ${to}
+
 ${date2} (${time2})
+${to} to ${airport}
 
 ${passengers} Pax
 
   Thanks.`);
   } else {
+    const subjectBox = await page.$("#subject");
+    await subjectBox.click({ clickCount: 3 });
+    await subjectBox.type(`NEED OW: ${date} ${airport} - ${to} ${passengers} PAX`);
     const textBox = await page.$("#comments");
     await textBox.type(`Hi Team,
-Please quote the following-
+Please quote the following one way-
 
 ${date} (${time})
 ${airport} to ${to}

@@ -41,7 +41,7 @@ function Home() {
           variant="contained"
           color="primary"
           onClick={() => navigate("/avinodeSearch")}>
-          Avinode
+          Avinode (One-Way)
         </Button>
         <Button
           variant="contained"

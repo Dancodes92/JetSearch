@@ -28,7 +28,7 @@ function Search() {
   const [time, setTime] = useState("");
   const [date2, setDate2] = useState("");
   const [time2, setTime2] = useState("");
-  const [passengers, setPassengers] = useState(null);
+  const [passengers, setPassengers] = useState(0);
   const [categories, setCategories] = useState([]);
   const [radius, setRadius] = useState(0);
   const [open, setOpen] = useState(false);
@@ -70,6 +70,7 @@ function Search() {
         console.log("data", res.data);
         setIsLoading(false);
         //navigate to the results page and pass the data as props
+        console.log("result", res.data);
         navigate("/results", {
           state: { flights: res.data, airport: airport },
         });
@@ -123,8 +124,8 @@ function Search() {
                 label="From (ICAO)"
                 type="text"
                 fullWidth
-                value={from}
-                onChange={e => setFrom(e.target.value)}
+                value={from.toUpperCase()}
+                onChange={e => setFrom(e.target.value.toUpperCase())}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -133,8 +134,8 @@ function Search() {
                 label="To (ICAO)"
                 type="text"
                 fullWidth
-                value={to}
-                onChange={e => setTo(e.target.value)}
+                value={to.toUpperCase()}
+                onChange={e => setTo(e.target.value.toUpperCase())}
               />
             </Grid>
             <Grid item xs={12} sm={6}>

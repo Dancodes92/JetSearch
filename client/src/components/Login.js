@@ -1,11 +1,10 @@
 import { useRef, useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -24,9 +23,6 @@ function Copyright(props) {
       align="center"
       {...props}>
       {"Copyright © "}
-      <Link color="inherit" href="jetsearch.info">
-        JetSearch.info
-      </Link>{" "}
       {new Date().getFullYear()}
       {"."}
     </Typography>
@@ -133,8 +129,10 @@ export default function Login() {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="/signup" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link to="/signup">
+                  <Typography variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Typography>
                 </Link>
               </Grid>
             </Grid>

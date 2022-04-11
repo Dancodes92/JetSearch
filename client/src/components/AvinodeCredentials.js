@@ -64,7 +64,7 @@ function AvinodeCredentials({
     if (errMsg) {
       setTimeout(() => {
         setErrMsg("");
-      }, 6000);
+      }, 3000);
       setOpen(true);
     }
   }, [errMsg]);
@@ -74,7 +74,7 @@ function AvinodeCredentials({
     setTimeout(() => {
       setErrMsg("");
       onNextStep();
-    }, 3000);
+    }, 500);
   }
 
   return (
@@ -112,7 +112,7 @@ function AvinodeCredentials({
               variant="contained"
               color="primary"
               type="submit"
-              disabled={loading || !email || !pwd}
+              disabled={loading || !email || !pwd || errMsg}
               fullWidth>
               {loading ? <CircularProgress size={24} /> : "Next"}
             </Button>
