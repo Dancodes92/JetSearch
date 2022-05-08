@@ -18,7 +18,7 @@ const avinodeSearcher = async (
   catagory
 ) => {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -198,7 +198,6 @@ const avinodeSearcher = async (
     );
     await button[0].click();
 
-    await page.waitForTimeout(4000);
     // close the modal
 
     // click this document.querySelector("#avi-icon-close")
@@ -213,7 +212,6 @@ const avinodeSearcher = async (
 
   await startSelecting();
   await browser.close();
-  console.log("selections", selections);
   return selections;
 };
 
@@ -240,6 +238,7 @@ router.post("/", async (req, res) => {
     // send through one category at a time
     let selections = [];
     for (let i = 0; i < categories.length; i++) {
+      let userSelection = categories[i];
       let x = await avinodeSearcher(
         user.avinodeEmail,
         user.avinodePassword,
@@ -250,15 +249,18 @@ router.post("/", async (req, res) => {
         date2,
         time2,
         pax,
-        categories[i]
+        userSelection
       );
-      selections = selections.concat(x);
+      selections.push(x);
     }
-    console.log("selections", selections);
+    // send back one array of selections
+
+    selections = selections.flat();
+    console.log(selections);
     res.send(selections);
   } catch (err) {
     console.log(err);
-    res.status(500).send({ error: "Server error" });
+    res.status(500).json({ error: err.message });
   }
 });
 

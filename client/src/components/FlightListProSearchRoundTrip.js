@@ -17,6 +17,7 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import MuiAlert from "@mui/material/Alert";
 
 function SearchRoundTrip() {
   const [flights, setFlights] = useState([]);
@@ -28,11 +29,11 @@ function SearchRoundTrip() {
   const [time, setTime] = useState("");
   const [date2, setDate2] = useState("");
   const [time2, setTime2] = useState("");
-  const [passengers, setPassengers] = useState(0);
+  const [passengers, setPassengers] = useState(1);
   const [categories, setCategories] = useState([]);
   const [radius, setRadius] = useState(0);
   const [open, setOpen] = useState(false);
-
+  const [errMsg, setErrMsg] = useState("");
   const navigate = useNavigate();
 
   // have a button for search after a form that uses axios to make a post request to the server "api/search" with the form data
@@ -75,12 +76,11 @@ function SearchRoundTrip() {
         navigate("/results", {
           state: { flights: res.data, airport: airport },
         });
-      } else {
-        setIsError(true);
       }
     } catch (err) {
       setIsError(true);
       setIsLoading(false);
+      setErrMsg("Something went wrong, check the form and try again");
     }
   };
 
@@ -187,7 +187,7 @@ function SearchRoundTrip() {
                   type="number"
                   fullWidth
                   value={passengers}
-                  onChange={e => setPassengers(e.target.value)}
+                  onChange={e => setPassengers(e.target.value > 0 ? e.target.value : 1)}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -397,7 +397,8 @@ function SearchRoundTrip() {
                   fullWidth
                   variant="contained"
                   color="primary"
-                  disabled={isLoading || !canClick}>
+                  disabled={!to || !from || !date || !categories.length || !time || isLoading}
+                  >
                   {isLoading ? <CircularProgress size={24} /> : "Search"}
                 </Button>
               </Grid>
@@ -405,15 +406,18 @@ function SearchRoundTrip() {
           </Box>
         </form>
         <Snackbar
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center",
-          }}
           open={open}
-          autoHideDuration={6000}
           onClose={() => setOpen(false)}
-          message="Error please try again"
-        />
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            onClose={() => setOpen(false)}
+            severity="error"
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+            {errMsg}
+          </MuiAlert>
+        </Snackbar>
       </Box>
     </Container>
   );

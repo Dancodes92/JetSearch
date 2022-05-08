@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
@@ -141,7 +141,6 @@ export default function Login() {
         <Copyright sx={{ mt: 8, mb: 4 }} />
         <Snackbar
           open={open}
-          autoHideDuration={6000}
           onClose={handleClose}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}>
           <MuiAlert

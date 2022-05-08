@@ -72,13 +72,16 @@ const flightListPro = async (
 ) => {
   // headless mode
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
   const page = await browser.newPage();
   await page.goto("https://flightlistpro.com/index.php");
   // await page.setViewport({ width: 1297, height: 679 });
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
+  );
 
   await page.type("#username", email);
   await page.type("#password", password);
@@ -96,7 +99,7 @@ const flightListPro = async (
 
   await page.waitForSelector("#pax");
   await page.click("#pax");
-  await page.type("#pax", passengers);
+  await page.type("#pax", `${passengers}`);
 
   // in the array of categories, click the checkboxes
   const clickCheckboxes = async () => {
@@ -170,8 +173,6 @@ const flightListPro = async (
     });
 
     allSelects.push(flightPicker);
-
-
     // if there is a next page button then click it
     const nextPage = await page.evaluate(() => {
       const nextPage = document.querySelectorAll(
@@ -203,7 +204,6 @@ const flightListPro = async (
   // add the opAndJet array to the allSelects array
   allSelects.push(opAndJet);
 
-
   page.waitForTimeout(500);
 
   await page.click("#sendFeedback");
@@ -226,7 +226,9 @@ const flightListPro = async (
     const subjectBox = await page.$("#subject");
     // click three times to clear the subject box
     await subjectBox.click({ clickCount: 3 });
-    await subjectBox.type(`NEED RT: ${date} - ${date2} ${airport} - ${to} - ${airport} ${passengers} PAX`);
+    await subjectBox.type(
+      `NEED RT: ${date} - ${date2} ${airport} - ${to} - ${airport} ${passengers} PAX`
+    );
     const textBox = await page.$("#comments");
     await textBox.type(`Hi Team,
 Please quote the following round trip-
@@ -243,7 +245,9 @@ ${passengers} Pax
   } else {
     const subjectBox = await page.$("#subject");
     await subjectBox.click({ clickCount: 3 });
-    await subjectBox.type(`NEED OW: ${date} ${airport} - ${to} ${passengers} PAX`);
+    await subjectBox.type(
+      `NEED OW: ${date} ${airport} - ${to} ${passengers} PAX`
+    );
     const textBox = await page.$("#comments");
     await textBox.type(`Hi Team,
 Please quote the following one way-
@@ -265,6 +269,8 @@ ${passengers} Pax
 
   await browser.close();
   console.log("allSelects", allSelects);
+  // flatten the allSelects array
+  const flatSelects = allSelects.flat();
 
-  return allSelects;
+  return flatSelects;
 };

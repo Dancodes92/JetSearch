@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
@@ -6,7 +7,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import logo from "../2.png";
-import Link from "@mui/material/Link";
+
 
 function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
   const [confirmPwd, setConfirmPwd] = useState("");
@@ -81,8 +82,10 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
           </Button>
           <Grid container>
             <Grid item>
-              <Link href="/login" variant="body2">
-                {"Already have an account? Sign In"}
+              <Link to="/login">
+                <Typography variant="body2">
+                  {"Already have an account? Sign In"}
+                </Typography>
               </Link>
             </Grid>
           </Grid>

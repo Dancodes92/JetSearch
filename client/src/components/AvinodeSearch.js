@@ -22,7 +22,7 @@ function AvinodeSearch() {
   const [to, setTo] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [pax, setPax] = useState("");
+  const [pax, setPax] = useState("0");
   const [date2, setDate2] = useState("");
   const [time2, setTime2] = useState("");
   const [categories, setCategories] = useState([]);
@@ -148,7 +148,7 @@ function AvinodeSearch() {
                 fullWidth
                 value={pax}
                 autoComplete="off"
-                onChange={e => setPax(e.target.value)}
+                onChange={e => setPax(e.target.value > 0 ? e.target.value : 1)}
               />
             </Grid>
             <Grid item xs={12}>
