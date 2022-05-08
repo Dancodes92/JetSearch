@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -7,7 +7,6 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import logo from "../2.png";
-
 
 function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
   const [confirmPwd, setConfirmPwd] = useState("");
@@ -32,7 +31,6 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
           alignItems: "center",
         }}>
         <img src={logo} alt="JetSearch Logo" width="150px" height="150px" />
-
         <Typography variant="body1">Sign up</Typography>
         <Box component="form" onSubmit={onNextStep} noValidate sx={{ mt: 1 }}>
           <TextField
@@ -71,7 +69,6 @@ function EmailandPassword({ email, pwd, setEmail, setPwd, onNextStep }) {
             onChange={e => setConfirmPwd(e.target.value)}
             error={!doPasswordsMatch()}
           />
-
           <Button
             type="submit"
             fullWidth

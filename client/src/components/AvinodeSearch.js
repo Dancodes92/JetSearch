@@ -22,7 +22,7 @@ function AvinodeSearch() {
   const [to, setTo] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [pax, setPax] = useState("0");
+  const [pax, setPax] = useState("1");
   const [date2, setDate2] = useState("");
   const [time2, setTime2] = useState("");
   const [categories, setCategories] = useState([]);
